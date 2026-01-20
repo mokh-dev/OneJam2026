@@ -425,6 +425,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SheepSpawn
   Sheep: {fileID: 9055571230372158398, guid: 631a61179cc22e14aa309bc713858959, type: 3}
+  spawnTime1: 2
+  spawnTime2: 5
 --- !u!1001 &5234150719605725716
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -439,7 +441,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7739089945526404815, guid: 631a61179cc22e14aa309bc713858959, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.46
+      value: -0.46
       objectReference: {fileID: 0}
     - target: {fileID: 7739089945526404815, guid: 631a61179cc22e14aa309bc713858959, type: 3}
       propertyPath: m_LocalPosition.z
