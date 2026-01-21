@@ -520,6 +520,7 @@ MonoBehaviour:
   sheep: {fileID: 9055571230372158398, guid: 631a61179cc22e14aa309bc713858959, type: 3}
   spawnTime1: 2
   spawnTime2: 5
+  numOfSheep: 10
 --- !u!1 &727326645
 GameObject:
   m_ObjectHideFlags: 0
