@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2633836286395460460}
   - component: {fileID: 7508953785765884207}
   - component: {fileID: 97179775450571887}
+  - component: {fileID: 1792578676191284467}
   m_Layer: 0
   m_Name: Lasso
   m_TagString: Untagged
@@ -107,6 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4078a56dd5eb4b94b8e291527fcce0a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lasso
+  PlayerScript: {fileID: 0}
 --- !u!50 &7508953785765884207
 Rigidbody2D:
   serializedVersion: 5
@@ -164,12 +166,38 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.21133333}
   m_Radius: 0.26
+--- !u!233 &1792578676191284467
+HingeJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4747503565193266507}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_AutoConfigureConnectedAnchor: 1
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0, y: 0}
+  m_UseConnectedAnchor: 1
+  m_UseMotor: 0
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 0
+  m_AngleLimits:
+    m_LowerAngle: 0
+    m_UpperAngle: 359
 --- !u!1 &7966932529567691107
 GameObject:
   m_ObjectHideFlags: 0
