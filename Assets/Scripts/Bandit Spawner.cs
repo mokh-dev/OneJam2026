@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-public class SheepSpawn : MonoBehaviour
+public class BanditSpawner : MonoBehaviour
 {
-    [SerializeField] GameObject sheep;
+    [SerializeField] GameObject bandit;
     [SerializeField] float spawnTime1 = 2f;
     [SerializeField] float spawnTime2 = 5f;
     
@@ -20,21 +20,21 @@ public class SheepSpawn : MonoBehaviour
         StartCoroutine(SpawnScript()); //starts the spawning loop
     }
 
-    //method to spawn sheep
+    //method to spawn Bandits
     IEnumerator SpawnScript()
     {
         while(true)
         {
-            //sets the spawnTime of the next sheep
+            //sets the spawnTime of the next bandit
             randomSpawnTime = Random.Range(spawnTime1, spawnTime2);
             yield return new WaitForSeconds(randomSpawnTime);
 
-            //sets the spawn location of the sheep
+            //sets the spawn location of the bandit
             float posX = Random.Range(pos1.position.x, pos2.position.x);
             float posY = Random.Range(pos1.position.y, pos2.position.y);
             Vector2 spawnPosition = new Vector2(posX, posY);
 
-            Instantiate(sheep, spawnPosition, Quaternion.Euler(0, 0, 90)); //spawns the sheep
+            Instantiate(bandit, spawnPosition, Quaternion.Euler(0, 0, 90)); //spawns the bandit
         }
     }
 }
