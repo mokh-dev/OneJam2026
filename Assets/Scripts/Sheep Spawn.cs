@@ -6,6 +6,7 @@ public class SheepSpawn : MonoBehaviour
     [SerializeField] GameObject sheep;
     [SerializeField] float spawnTime1 = 2f;
     [SerializeField] float spawnTime2 = 5f;
+    [SerializeField] int numOfSheep;
     
     float randomSpawnTime;
     Transform pos1;
@@ -17,17 +18,16 @@ public class SheepSpawn : MonoBehaviour
         pos1 = transform.GetChild(0);
         pos2 = transform.GetChild(1);
 
-        StartCoroutine(SpawnScript()); //starts the spawning loop
+        SpawnScript(numOfSheep); //starts the spawning loop
     }
 
     //method to spawn sheep
-    IEnumerator SpawnScript()
+    void SpawnScript(int numOfSheeps)
     {
-        while(true)
+        for(int i = 0; i < numOfSheeps; i++)
         {
             //sets the spawnTime of the next sheep
             randomSpawnTime = Random.Range(spawnTime1, spawnTime2);
-            yield return new WaitForSeconds(randomSpawnTime);
 
             //sets the spawn location of the sheep
             float posX = Random.Range(pos1.position.x, pos2.position.x);

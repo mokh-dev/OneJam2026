@@ -24,7 +24,7 @@ public class SheepBehaviour : MonoBehaviour
         sheep = GetComponent<Rigidbody2D>();
         sheepPositionY = sheep.transform.position.y;
         angleBehaviour();
-
+        
         sheep.linearVelocity = sheepRotation * speed; //makes the sheep move with the chosen angle
     }
 
