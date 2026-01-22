@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class SheepBehaviour : MonoBehaviour
@@ -23,13 +24,13 @@ public class SheepBehaviour : MonoBehaviour
         //decides the sheeps direction of movement
         sheep = GetComponent<Rigidbody2D>();
         sheepPositionY = sheep.transform.position.y;
-        angleBehaviour();
+        //angleBehaviour();
         
         sheep.linearVelocity = sheepRotation * speed; //makes the sheep move with the chosen angle
     }
 
     //calculates and chooses a suitable angle for the sheep
-    void angleBehaviour()
+    /*void angleBehaviour()
     {
         isStraight = Random.Range(0, 2) == 1; //gives a 50% chance for the sheep to move straight
 
@@ -59,5 +60,10 @@ public class SheepBehaviour : MonoBehaviour
         {
             sheepRotation = new Vector2 (-1, 0);
         }
+    }*/
+
+    IEnumerator ChooseRandomPosition()
+    {
+        yield return new WaitForSeconds(5);
     }
 }
