@@ -559,7 +559,7 @@ MonoBehaviour:
   _lassoSpinIncreaseCoefficient: 80
   _lassoSpinDistanceBias: 5
   _lassoBaseFlingForce: 10
-  _lassoSpinFlingForceBias: 1
+  _lassoSpinFlingForceBias: 0.02
 --- !u!50 &565239604
 Rigidbody2D:
   serializedVersion: 5
