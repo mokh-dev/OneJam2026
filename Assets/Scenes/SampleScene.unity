@@ -457,6 +457,7 @@ GameObject:
   - component: {fileID: 565239600}
   - component: {fileID: 565239602}
   - component: {fileID: 565239604}
+  - component: {fileID: 565239605}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -514,7 +515,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 0.43137255}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -532,7 +533,7 @@ Transform:
   m_GameObject: {fileID: 565239599}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.03, z: 0}
+  m_LocalPosition: {x: -2.69, y: -0.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -552,9 +553,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   IsHoldingMouseDown: 0
   _lassoPre: {fileID: 4747503565193266507, guid: 34932d30c4d8ef34d8dadcd4e6222b80, type: 3}
+  _ropeSectionPre: {fileID: 2328215853573830637, guid: f9afe36042aa0ca4781c3d122fb5e715, type: 3}
+  _ropeAnchor: {fileID: 565239599}
+  _ropeSectionCount: 5
+  _ropeSectionLength: 0.4
   _playerMoveSpeed: 3
-  _lassoThrowForce: 20
-  _lassoRetractingForce: 7.5
+  _lassoThrowForce: 1
+  _lassoRetractingForce: 200
   _lassoBaseSpinSpeed: 0
   _lassoSpinIncreaseCoefficient: 80
   _lassoSpinDistanceBias: 5
@@ -587,6 +592,32 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!233 &565239605
+HingeJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565239599}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_AutoConfigureConnectedAnchor: 1
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: -2.69, y: -0.89}
+  m_UseConnectedAnchor: 1
+  m_UseMotor: 0
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 0
+  m_AngleLimits:
+    m_LowerAngle: 0
+    m_UpperAngle: 359
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0

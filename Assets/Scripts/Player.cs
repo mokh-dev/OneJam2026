@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class Player : MonoBehaviour
     private Camera cam;
 
     [SerializeField] private GameObject _lassoPre; 
+    [SerializeField] private GameObject _ropeSectionPre; 
+    [SerializeField] private GameObject _ropeAnchor; 
+    [SerializeField] private float _ropeSectionCount; 
+    [SerializeField] private float _ropeSectionLength; 
     [SerializeField] private float _playerMoveSpeed; 
     [SerializeField] private float _lassoThrowForce; 
     [SerializeField] private float _lassoRetractingForce; 
@@ -21,22 +26,26 @@ public class Player : MonoBehaviour
     private bool holdingLasso = true;
     private bool isRetractingLasso;
     private bool lassoFull;
+    private bool lassoIsSpinning;
+
+    private bool ropeSectionJointsActive;
+
     private int spinIncreaseCount;
     private int spinDirection;
-
     private int initialMouseQuadrant;
     private int currentMouseQuadrant;
     private int previousMouseQuadrant;
     private int currentSpunMouseQuadrant;
     private int previousSpunMouseQuadrant;
-    private bool lassoIsSpinning;
 
     private GameObject grabbedObj;
+    private List<GameObject> spawnedRopeSections = new List<GameObject>();
     private Lasso activeLasso;
     private Rigidbody2D activeLassoRB;
     private Rigidbody2D playerRB;
     private Vector2 moveDirection;
     private float spinSpeed;
+    
 
 
 
@@ -46,7 +55,6 @@ public class Player : MonoBehaviour
     {
         cam = Camera.main;
         playerRB = gameObject.GetComponent<Rigidbody2D>();
-        
     }
 
     void Update()
@@ -54,17 +62,57 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
         IsHoldingMouseDown = Input.GetButton("Fire1");
+
+        if (holdingLasso == false && isRetractingLasso == false) RopeSpawning();
+
+        if (holdingLasso == false && isRetractingLasso == false && ropeSectionJointsActive == false && spawnedRopeSections.Count >= _ropeSectionCount) ActivateRopeJoints();
         
         if (isRetractingLasso == true)
         {
-            RetractLasso();
-            if (LassoInPlayerBounds() == true) HolsterLasso();
+            RetractRope();
+
+            if (ObjInPlayerBounds(activeLasso.gameObject) == true) HolsterLasso();
         }
 
         if (lassoFull == true) CheckForNewMouseQuadrant();
 
         if (lassoIsSpinning) SpinLasso();
 
+    }
+
+    private void RetractRope()
+    {
+        if (spawnedRopeSections.Count <= 0 ) return;
+        if (ObjInPlayerBounds(spawnedRopeSections[spawnedRopeSections.Count - 1]) == true) RemoveRopeSectionJointConnnections();
+        if (spawnedRopeSections.Count <= 0 ) return;
+
+        Vector2 retractingDir = ((Vector2)transform.position - (Vector2)spawnedRopeSections[spawnedRopeSections.Count - 1].transform.position).normalized;
+        spawnedRopeSections[spawnedRopeSections.Count - 1].GetComponent<Rigidbody2D>().AddForce(retractingDir * _lassoRetractingForce);
+    }
+
+    private void ActivateRopeJoints()
+    {
+        ropeSectionJointsActive = true;
+        foreach (GameObject ropeSection in spawnedRopeSections)
+        {
+            ropeSection.GetComponent<HingeJoint2D>().enabled = true;
+        }
+    }
+
+    private void RemoveRopeSectionJointConnnections()
+    {
+        GameObject lastRopeSection = spawnedRopeSections[spawnedRopeSections.Count - 1];
+
+        
+        spawnedRopeSections.Remove(lastRopeSection);
+
+        Destroy(lastRopeSection);
+
+        if (spawnedRopeSections.Count < 1) return;
+
+        GameObject newLastRopeSection = spawnedRopeSections[spawnedRopeSections.Count - 1];
+
+        newLastRopeSection.GetComponent<HingeJoint2D>().enabled = false;
     }
 
     public void OnGroundMouseDown(PointerEventData eventData)
@@ -78,6 +126,56 @@ public class Player : MonoBehaviour
         if (lassoIsSpinning == true) FlingObject();
         
         if (holdingLasso == false) StartRetracting();
+    }
+
+    private void RopeSpawning()
+    {
+        if (spawnedRopeSections.Count >= _ropeSectionCount) return;
+
+        Vector2 lassoPos = activeLasso.gameObject.transform.position;
+        if (Vector2.Distance(transform.position, lassoPos) >= _ropeSectionLength)
+        {
+            SpawnRopeSection();
+        }
+    }
+
+    private void SpawnRopeSection()
+    {
+        Vector2 lassoDirection = ((Vector2)activeLasso.gameObject.transform.position - (Vector2)transform.position).normalized;
+
+        float ropeSectionAngle = (Mathf.Atan2(lassoDirection.y, lassoDirection.x) * Mathf.Rad2Deg) - 90;
+        Quaternion ropeSectionRotation = Quaternion.AngleAxis(ropeSectionAngle, Vector3.forward); 
+
+        GameObject ropeSectionObj = Instantiate(_ropeSectionPre, transform.position, ropeSectionRotation);
+
+        AddRopeSectionJointConnnections(ropeSectionObj);
+        
+    }
+
+    private void AddRopeSectionJointConnnections(GameObject newRopeSection)
+    {
+        HingeJoint2D ropeSectionJoint = newRopeSection.GetComponent<HingeJoint2D>();
+        ropeSectionJoint.gameObject.name = "RopeSection " + spawnedRopeSections.Count.ToString();
+
+        if (spawnedRopeSections.Count == 0)
+        {
+            ropeSectionJoint.connectedBody = _ropeAnchor.GetComponent<Rigidbody2D>();
+            ropeSectionJoint.anchor = new Vector2(0, 1);
+            ropeSectionJoint.connectedAnchor = new Vector2(0, 0);
+
+            activeLasso.GetComponent<HingeJoint2D>().connectedBody = newRopeSection.GetComponent<Rigidbody2D>();
+          
+        } 
+        else
+        {
+            HingeJoint2D previousJoint = spawnedRopeSections[spawnedRopeSections.Count - 1].GetComponent<HingeJoint2D>();
+            previousJoint.connectedBody = ropeSectionJoint.GetComponent<Rigidbody2D>();
+            previousJoint.connectedAnchor = new Vector2(0, -1);
+
+            ropeSectionJoint.connectedBody = _ropeAnchor.GetComponent<Rigidbody2D>();
+        }
+
+        spawnedRopeSections.Add(newRopeSection);
     }
 
     private void CheckForNewMouseQuadrant()
@@ -168,6 +266,7 @@ public class Player : MonoBehaviour
         activeLasso = null;
 
         holdingLasso = true;
+        ropeSectionJointsActive = false;
     }
 
     private void FlingObject()
@@ -198,11 +297,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void RetractLasso()
-    {
-        Vector2 retractingDir = ((Vector2)transform.position - (Vector2)activeLasso.gameObject.transform.position).normalized;
-        activeLassoRB.AddForce(retractingDir * _lassoRetractingForce);
-    }
+
 
     private int GetCurrentMouseQuadrant(Vector2 mousePos)
     {
@@ -232,13 +327,11 @@ public class Player : MonoBehaviour
         return 0;
     }
 
-    private bool LassoInPlayerBounds()
+    private bool ObjInPlayerBounds(GameObject objToCheck)
     {
-        Vector2 lassoPos = activeLasso.transform.position;
-
         float boundDistance = 0.5f;
 
-        if (Vector2.Distance(lassoPos, (Vector2)transform.position) > boundDistance) return false;
+        if (Vector2.Distance((Vector2)objToCheck.transform.position, (Vector2)transform.position) > boundDistance) return false;
 
         return true;
     }
