@@ -12,18 +12,31 @@ public class Player : MonoBehaviour
     [SerializeField] private float _playerMoveSpeed; 
     [SerializeField] private float _lassoThrowForce; 
     [SerializeField] private float _lassoRetractingForce; 
-    [SerializeField] private float _lassoSpinSpeed; 
-    [SerializeField] private float _lassoFlingForce; 
+    [SerializeField] private float _lassoBaseSpinSpeed; 
+    [SerializeField] private float _lassoSpinIncreaseCoefficient; 
+    [SerializeField] private float _lassoSpinDistanceBias; 
+    [SerializeField] private float _lassoBaseFlingForce; 
+    [SerializeField] private float _lassoSpinFlingForceBias; 
 
-    private bool hasLasso = true;
+    private bool holdingLasso = true;
     private bool isRetractingLasso;
     private bool lassoFull;
+    private int spinIncreaseCount;
+    private int spinDirection;
+
+    private int initialMouseQuadrant;
+    private int currentMouseQuadrant;
+    private int previousMouseQuadrant;
+    private int currentSpunMouseQuadrant;
+    private int previousSpunMouseQuadrant;
+    private bool lassoIsSpinning;
 
     private GameObject grabbedObj;
-    private GameObject activeLasso;
+    private Lasso activeLasso;
     private Rigidbody2D activeLassoRB;
     private Rigidbody2D playerRB;
-    private Vector2 moveDir;
+    private Vector2 moveDirection;
+    private float spinSpeed;
 
 
 
@@ -48,41 +61,76 @@ public class Player : MonoBehaviour
             if (LassoInPlayerBounds() == true) HolsterLasso();
         }
 
-        if (lassoFull == true)
-        {
-            SpinLasso();
-        }
+        if (lassoFull == true) CheckForNewMouseQuadrant();
+
+        if (lassoIsSpinning) SpinLasso();
+
     }
 
     public void OnGroundMouseDown(PointerEventData eventData)
     {
         Vector2 pointingVector = (GetMousePosition() - (Vector2)transform.position).normalized;  
 
-        if (hasLasso == true) ThrowLasso(pointingVector, _lassoThrowForce);     
+        if (holdingLasso == true) ThrowLasso(pointingVector, _lassoThrowForce);     
     }
     public void OnGroundMouseUp(PointerEventData eventData)
     {
-        if (hasLasso == false) StartRetractingLasso();
+        if (lassoIsSpinning == true) FlingObject();
+        
+        if (holdingLasso == false) StartRetracting();
     }
+
+    private void CheckForNewMouseQuadrant()
+    {
+        previousMouseQuadrant = currentMouseQuadrant;
+        currentMouseQuadrant = GetCurrentMouseQuadrant(GetMousePosition());
+
+        if (initialMouseQuadrant == currentMouseQuadrant && currentSpunMouseQuadrant == 0) return;
+
+        if (currentMouseQuadrant != previousMouseQuadrant)
+        {
+            MouseSpin();   
+        }
+    }
+    
+    private void MouseSpin()
+    {
+        currentSpunMouseQuadrant = currentMouseQuadrant;
+        previousSpunMouseQuadrant = previousMouseQuadrant;
+
+        if (spinDirection == 0) spinDirection = GetSpinDir(previousSpunMouseQuadrant, currentSpunMouseQuadrant); // initial
+        if (spinDirection != GetSpinDir(previousSpunMouseQuadrant, currentSpunMouseQuadrant)) return; //switched spin direction
+
+        if (lassoIsSpinning == false) activeLasso.StartedSpinning(); //update lasso once 
+        lassoIsSpinning = true;
+
+        float mouseDistanceFromPlayer = Vector2.Distance(GetMousePosition(), (Vector2)transform.position);
+
+        //Debug.Log("Spin Increase: " + Mathf.RoundToInt(mouseDistanceFromPlayer *_lassoSpinDistanceBias).ToString());
+        spinIncreaseCount = spinIncreaseCount + Mathf.RoundToInt(mouseDistanceFromPlayer *_lassoSpinDistanceBias * spinDirection);
+    }
+
     private void PlayerMovement()
     {
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
-        moveDir = new Vector2(horizontalInput, verticalInput).normalized;
+        moveDirection = new Vector2(horizontalInput, verticalInput).normalized;
 
 
-        playerRB.linearVelocity = moveDir * _playerMoveSpeed;
-
+        playerRB.linearVelocity = moveDirection * _playerMoveSpeed;
     }
 
     private void SpinLasso()
     {
-        playerRB.MoveRotation(playerRB.rotation + _lassoSpinSpeed * Time.fixedDeltaTime);
+        spinSpeed = _lassoBaseSpinSpeed + _lassoSpinIncreaseCoefficient * Mathf.Max(0f, Mathf.Log(Mathf.Abs(spinIncreaseCount))) * Mathf.Sign(spinIncreaseCount);
+
+        playerRB.MoveRotation(playerRB.rotation + spinSpeed * Time.fixedDeltaTime);
     }
+
 
     public void LassoGrabbed(Lassoable lassoable)
     {
-        Vector2 lassoDirection = ((Vector2)activeLasso.transform.position - (Vector2)transform.position).normalized;
+        Vector2 lassoDirection = ((Vector2)activeLasso.gameObject.transform.position - (Vector2)transform.position).normalized;
 
         float playerRotationAngle = (Mathf.Atan2(lassoDirection.y, lassoDirection.x) * Mathf.Rad2Deg) - 90;
         playerRB.SetRotation(playerRotationAngle);
@@ -90,51 +138,98 @@ public class Player : MonoBehaviour
         activeLassoRB.linearVelocity = Vector2.zero;
 
         grabbedObj = lassoable.gameObject;
+
+        initialMouseQuadrant = GetCurrentMouseQuadrant(GetMousePosition());
         lassoFull = true;
     }
 
 
     private void ThrowLasso(Vector2 direction, float throwForce)
     {
-        hasLasso = false;
+        holdingLasso = false;
 
         float lassoRotationAngle = (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) - 90;
         Quaternion lassoRotation = Quaternion.AngleAxis(lassoRotationAngle, Vector3.forward); 
 
-        activeLasso = Instantiate(_lassoPre, (Vector2)transform.position, lassoRotation);
-        activeLassoRB = activeLasso.GetComponent<Rigidbody2D>();
+        GameObject lassoObj = Instantiate(_lassoPre, (Vector2)transform.position, lassoRotation);
+
+        activeLassoRB = lassoObj.GetComponent<Rigidbody2D>();
         activeLassoRB.AddForce(direction * throwForce, ForceMode2D.Impulse);
 
-        activeLasso.GetComponent<Lasso>().PlayerScript = this;
+        activeLasso = lassoObj.GetComponent<Lasso>();
+        activeLasso.PlayerScript = this;
     }
 
     private void HolsterLasso()
     {
         isRetractingLasso = false;
 
-        Destroy(activeLasso);
+        Destroy(activeLasso.gameObject);
         activeLasso = null;
 
-        hasLasso = true;
+        holdingLasso = true;
     }
 
-    private void StartRetractingLasso()
+    private void FlingObject()
+    {
+        activeLasso.PlayerFlung((_lassoBaseFlingForce + spinSpeed *_lassoSpinFlingForceBias) * Mathf.Sign(spinDirection));
+
+        lassoIsSpinning = false;
+        lassoFull = false;
+
+        spinIncreaseCount = 0;
+        currentMouseQuadrant = 0;
+        previousMouseQuadrant = 0;
+        currentSpunMouseQuadrant = 0;
+        previousSpunMouseQuadrant = 0;
+        spinDirection = 0;
+        spinSpeed = 0;
+    }
+
+    private void StartRetracting()
     {
         isRetractingLasso = true;
-
-
+        
         if (lassoFull)
         {
             lassoFull = false;
 
-            activeLasso.GetComponent<Lasso>().PlayerLetGo(_lassoFlingForce);
+            activeLasso.PlayerDropped();
         }
     }
 
     private void RetractLasso()
     {
-        Vector2 retractingDir = ((Vector2)transform.position - (Vector2)activeLasso.transform.position).normalized;
+        Vector2 retractingDir = ((Vector2)transform.position - (Vector2)activeLasso.gameObject.transform.position).normalized;
         activeLassoRB.AddForce(retractingDir * _lassoRetractingForce);
+    }
+
+    private int GetCurrentMouseQuadrant(Vector2 mousePos)
+    {
+        Vector2 playerPos = (Vector2)transform.position;
+
+        if (mousePos.x > playerPos.x && mousePos.y > playerPos.y) return 1;
+        if (mousePos.x < playerPos.x && mousePos.y > playerPos.y) return 2;
+        if (mousePos.x < playerPos.x && mousePos.y < playerPos.y) return 3;
+        if (mousePos.x > playerPos.x && mousePos.y < playerPos.y) return 4;
+
+        return 1; //center
+    }
+
+
+    // 1: positive and Counterclockwise
+    // -1: negative and clockwise
+    private int GetSpinDir(int previousQuadrant, int currentQuadrant) 
+    {
+        if (currentQuadrant == previousQuadrant) return 0;
+
+        if (previousQuadrant == 4 && currentQuadrant == 1) return 1; 
+        if (previousQuadrant == 1 && currentQuadrant == 4) return -1;
+
+        if (currentQuadrant > previousQuadrant) return 1; //CCW
+        if (currentQuadrant < previousQuadrant) return -1; //CW
+
+        return 0;
     }
 
     private bool LassoInPlayerBounds()

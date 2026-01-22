@@ -555,8 +555,11 @@ MonoBehaviour:
   _playerMoveSpeed: 3
   _lassoThrowForce: 20
   _lassoRetractingForce: 7.5
-  _lassoSpinSpeed: 400
-  _lassoFlingForce: 20
+  _lassoBaseSpinSpeed: 0
+  _lassoSpinIncreaseCoefficient: 80
+  _lassoSpinDistanceBias: 5
+  _lassoBaseFlingForce: 10
+  _lassoSpinFlingForceBias: 1
 --- !u!50 &565239604
 Rigidbody2D:
   serializedVersion: 5

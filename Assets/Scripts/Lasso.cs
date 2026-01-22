@@ -29,12 +29,21 @@ public class Lasso : MonoBehaviour
         }
     }
 
-    public void PlayerLetGo(float flingForce)
+    public void PlayerFlung(float flingForce)
     {
         isSpinning = false;
 
         caughtObj.LassoLetGo();
         caughtObj.GetComponent<Rigidbody2D>().AddForce(-transform.right * flingForce, ForceMode2D.Impulse);
+        caughtObj = null;
+
+        lassoJoint.enabled = false;
+        lassoJoint.connectedBody = null;
+    }
+
+    public void PlayerDropped()
+    {
+        caughtObj.LassoLetGo();
         caughtObj = null;
 
         lassoJoint.enabled = false;
@@ -50,10 +59,12 @@ public class Lasso : MonoBehaviour
 
         playerRB = PlayerScript.gameObject.GetComponent<Rigidbody2D>();
         lassoJoint.connectedBody = playerRB;
-
-
-        isSpinning = true;
     } 
+
+    public void StartedSpinning()
+    {
+        isSpinning = true;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
