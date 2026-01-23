@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
 
         if (holdingLasso == false && isRetractingLasso == false) RopeSpawning();
 
-        if (holdingLasso == false && isRetractingLasso == false && ropeSectionJointsActive == false && spawnedRopeSections.Count >= _ropeSectionCount) ActivateRopeJoints();
+        if (holdingLasso == false && isRetractingLasso == false && ropeSectionJointsActive == false && spawnedRopeSections.Count >= _ropeSectionCount) MakePlayerAnchor();
         
         if (isRetractingLasso == true)
         {
@@ -92,11 +92,17 @@ public class Player : MonoBehaviour
 
     private void ActivateRopeJoints()
     {
-        ropeSectionJointsActive = true;
+
         foreach (GameObject ropeSection in spawnedRopeSections)
         {
             ropeSection.GetComponent<HingeJoint2D>().enabled = true;
         }
+
+        foreach (GameObject ropeSection in spawnedRopeSections)
+        {
+            ropeSection.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        }
+        activeLasso.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
     }
 
     private void RemoveRopeSectionJointConnnections()
@@ -133,7 +139,7 @@ public class Player : MonoBehaviour
         if (spawnedRopeSections.Count >= _ropeSectionCount) return;
 
         Vector2 lassoPos = activeLasso.gameObject.transform.position;
-        if (Vector2.Distance(transform.position, lassoPos) >= _ropeSectionLength)
+        if (Vector2.Distance(transform.position, lassoPos) >= _ropeSectionLength * spawnedRopeSections.Count)
         {
             SpawnRopeSection();
         }
@@ -159,23 +165,52 @@ public class Player : MonoBehaviour
 
         if (spawnedRopeSections.Count == 0)
         {
-            ropeSectionJoint.connectedBody = _ropeAnchor.GetComponent<Rigidbody2D>();
+            ropeSectionJoint.connectedBody = activeLasso.GetComponent<Rigidbody2D>();
             ropeSectionJoint.anchor = new Vector2(0, 1);
-            ropeSectionJoint.connectedAnchor = new Vector2(0, 0);
-
-            activeLasso.GetComponent<HingeJoint2D>().connectedBody = newRopeSection.GetComponent<Rigidbody2D>();
-          
+            ropeSectionJoint.connectedAnchor = new Vector2(0, 0);         
         } 
         else
         {
-            HingeJoint2D previousJoint = spawnedRopeSections[spawnedRopeSections.Count - 1].GetComponent<HingeJoint2D>();
-            previousJoint.connectedBody = ropeSectionJoint.GetComponent<Rigidbody2D>();
-            previousJoint.connectedAnchor = new Vector2(0, -1);
-
-            ropeSectionJoint.connectedBody = _ropeAnchor.GetComponent<Rigidbody2D>();
+            Rigidbody2D previousRopeRB = spawnedRopeSections[spawnedRopeSections.Count - 1].GetComponent<Rigidbody2D>();
+            ropeSectionJoint.connectedBody = previousRopeRB;
+            ropeSectionJoint.connectedAnchor = new Vector2(0, -1);
         }
 
         spawnedRopeSections.Add(newRopeSection);
+    }
+
+    private void MakePlayerAnchor()
+    {
+        Debug.Log("player anchor");
+        ropeSectionJointsActive = true;
+
+        for (int i = 0; i < spawnedRopeSections.Count; i++)
+        {
+            HingeJoint2D ropeSectionJoint = spawnedRopeSections[i].GetComponent<HingeJoint2D>();
+
+            if (i == 0)
+            {
+                ropeSectionJoint.connectedBody = spawnedRopeSections[i + 1].GetComponent<Rigidbody2D>();
+                ropeSectionJoint.connectedAnchor = new Vector2(0, -1);
+
+                activeLasso.GetComponent<HingeJoint2D>().enabled = true;
+                activeLasso.GetComponent<HingeJoint2D>().connectedBody = ropeSectionJoint.GetComponent<Rigidbody2D>();
+            }
+            else if (i == spawnedRopeSections.Count - 1)
+            {
+                _ropeAnchor.GetComponent<HingeJoint2D>().connectedAnchor = ropeSectionJoint.transform.position;
+
+                ropeSectionJoint.connectedBody = _ropeAnchor.GetComponent<Rigidbody2D>();
+                ropeSectionJoint.anchor = new Vector2(0, 1);
+                ropeSectionJoint.connectedAnchor = new Vector2(0, 0);   
+            }
+            else
+            {
+                Rigidbody2D previousRopeRB = spawnedRopeSections[i + 1].GetComponent<Rigidbody2D>();
+                ropeSectionJoint.connectedBody = previousRopeRB;
+                ropeSectionJoint.connectedAnchor = new Vector2(0, -1);
+            }
+        }
     }
 
     private void CheckForNewMouseQuadrant()
@@ -267,6 +302,7 @@ public class Player : MonoBehaviour
 
         holdingLasso = true;
         ropeSectionJointsActive = false;
+        spawnedRopeSections = new List<GameObject>();
     }
 
     private void FlingObject()
