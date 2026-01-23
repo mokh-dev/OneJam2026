@@ -9,6 +9,7 @@ public class SheepSpawn : MonoBehaviour
     [SerializeField] int numOfSheep;
     
     SheepEscapeManager escapeManager;
+    GameObject Perimeter;
 
     float randomSpawnTime;
     Transform pos1;
@@ -19,7 +20,9 @@ public class SheepSpawn : MonoBehaviour
         //takes the positions if the 2 children as a reference point
         pos1 = transform.GetChild(0);
         pos2 = transform.GetChild(1);
-        escapeManager = GetComponent<SheepEscapeManager>();
+
+        Perimeter = GameObject.FindGameObjectWithTag("Perimeter");
+        escapeManager = Perimeter.GetComponent<SheepEscapeManager>();
 
         SpawnScript(numOfSheep); //starts the spawning loop
     }

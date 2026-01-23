@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class SheepEscapeManager : MonoBehaviour
     [SerializeField] int maxEscapedSheep = 3;
     [SerializeField] float minTimeToEscape = 2f;
     [SerializeField] float maxTimeToEscape = 5f;
+    
 
     public List<GameObject> sheepList = new List<GameObject>();
     public static SheepEscapeManager SheepManager;
@@ -23,13 +25,9 @@ public class SheepEscapeManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
-        if(maxEscapedSheep < 3)
-        {
-            
-        }
+        StartCoroutine(escapeSheep());
     }
 
     public void addSheepToList(GameObject sheep)
@@ -37,7 +35,6 @@ public class SheepEscapeManager : MonoBehaviour
         sheepList.Add(sheep);
         SheepBehaviour behaviour = sheep.GetComponent<SheepBehaviour>();
         behaviour.setIsEscaped(false);
-        behaviour.flagForEscape(false);
     }
 
     public void removeSheepFromList(GameObject sheep)
@@ -54,6 +51,7 @@ public class SheepEscapeManager : MonoBehaviour
         {
             sheepList.Remove(sheep);
             Destroy(sheep);
+            SheepBehaviour.numOfEscaped -= 1;
         }
     }
 
@@ -61,7 +59,7 @@ public class SheepEscapeManager : MonoBehaviour
     {
         if (sheepList.Count > 0)
         {
-            int randomSheep = Random.Range(0, sheepList.Count + 1);
+            int randomSheep = Random.Range(0, sheepList.Count);
             return sheepList[randomSheep];
         }
         else
@@ -70,17 +68,33 @@ public class SheepEscapeManager : MonoBehaviour
         }
     }
 
-    void escapeSheep(GameObject sheep, bool escaped)
+IEnumerator escapeSheep()
+{
+    while (true)
     {
-        SheepBehaviour behaviour = sheep.GetComponent<SheepBehaviour>();
-        behaviour.setIsEscaped(escaped);
-        behaviour.EscapePen();
+        if (sheepList.Count > 0) 
+        {
+            GameObject candidateSheep = GetRandomSheep();
+            if (candidateSheep != null)
+            {
+                SheepBehaviour behaviour = candidateSheep.GetComponent<SheepBehaviour>();
+                if (behaviour != null)
+                {
+                    yield return new WaitUntil(() => SheepBehaviour.numOfEscaped < maxEscapedSheep);
+                    yield return new WaitForSeconds(Random.Range(minTimeToEscape, maxTimeToEscape));
+                    if (behaviour != null)
+                    {
+                        behaviour.EscapePen();
+                    }
+                }
+            }
+        }
+        else
+        {
+            yield return null;
+        }
     }
-
-    void escapeSheep(GameObject sheep)
-    {
-        this.escapeSheep (sheep, true);
-    }
+}
 
     bool isSheepEscaped(GameObject sheep)
     {
