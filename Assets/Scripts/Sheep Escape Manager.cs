@@ -3,8 +3,13 @@ using UnityEngine;
 
 public class SheepEscapeManager : MonoBehaviour
 {
+    [SerializeField] int maxEscapedSheep = 3;
+    [SerializeField] float minTimeToEscape = 2f;
+    [SerializeField] float maxTimeToEscape = 5f;
+
     public List<GameObject> sheepList = new List<GameObject>();
     public static SheepEscapeManager SheepManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
@@ -18,10 +23,21 @@ public class SheepEscapeManager : MonoBehaviour
         }
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        if(maxEscapedSheep < 3)
+        {
+            
+        }
+    }
 
     public void addSheepToList(GameObject sheep)
     {
         sheepList.Add(sheep);
+        SheepBehaviour behaviour = sheep.GetComponent<SheepBehaviour>();
+        behaviour.setIsEscaped(false);
+        behaviour.flagForEscape(false);
     }
 
     public void removeSheepFromList(GameObject sheep)
@@ -29,6 +45,15 @@ public class SheepEscapeManager : MonoBehaviour
         if (sheepList.Contains(sheep))
         {
             sheepList.Remove(sheep);
+        }
+    }
+
+    public void killSheep(GameObject sheep)
+    {
+        if (sheepList.Contains(sheep))
+        {
+            sheepList.Remove(sheep);
+            Destroy(sheep);
         }
     }
 
@@ -45,9 +70,21 @@ public class SheepEscapeManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void escapeSheep(GameObject sheep, bool escaped)
     {
-        
+        SheepBehaviour behaviour = sheep.GetComponent<SheepBehaviour>();
+        behaviour.setIsEscaped(escaped);
+        behaviour.EscapePen();
+    }
+
+    void escapeSheep(GameObject sheep)
+    {
+        this.escapeSheep (sheep, true);
+    }
+
+    bool isSheepEscaped(GameObject sheep)
+    {
+        SheepBehaviour behaviour = sheep.GetComponent<SheepBehaviour>();
+        return behaviour.getIsEscape();
     }
 }

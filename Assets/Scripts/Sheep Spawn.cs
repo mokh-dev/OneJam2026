@@ -8,6 +8,8 @@ public class SheepSpawn : MonoBehaviour
     [SerializeField] float spawnTime2 = 5f;
     [SerializeField] int numOfSheep;
     
+    SheepEscapeManager escapeManager;
+
     float randomSpawnTime;
     Transform pos1;
     Transform pos2;
@@ -17,6 +19,7 @@ public class SheepSpawn : MonoBehaviour
         //takes the positions if the 2 children as a reference point
         pos1 = transform.GetChild(0);
         pos2 = transform.GetChild(1);
+        escapeManager = GetComponent<SheepEscapeManager>();
 
         SpawnScript(numOfSheep); //starts the spawning loop
     }
@@ -34,7 +37,8 @@ public class SheepSpawn : MonoBehaviour
             float posY = Random.Range(pos1.position.y, pos2.position.y);
             Vector2 spawnPosition = new Vector2(posX, posY);
 
-            Instantiate(sheep, spawnPosition, Quaternion.Euler(0, 0, 90)); //spawns the sheep
+            GameObject newSheep = Instantiate(sheep, spawnPosition, Quaternion.Euler(0, 0, 90)); //spawns the sheep
+            escapeManager.addSheepToList(newSheep);
         }
     }
 }
