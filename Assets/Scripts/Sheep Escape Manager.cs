@@ -62,6 +62,9 @@ IEnumerator escapeSheep()
 {
     while (true)
     {
+        yield return new WaitUntil(() => SheepBehaviour.numOfEscaped < maxEscapedSheep);
+        yield return new WaitForSeconds(Random.Range(minTimeToEscape, maxTimeToEscape));
+        
         if (sheepList.Count > 0) 
         {
             GameObject candidateSheep = GetRandomSheep();
@@ -70,8 +73,6 @@ IEnumerator escapeSheep()
                 SheepBehaviour behaviour = candidateSheep.GetComponent<SheepBehaviour>();
                 if (behaviour != null)
                 {
-                    yield return new WaitUntil(() => SheepBehaviour.numOfEscaped < maxEscapedSheep);
-                    yield return new WaitForSeconds(Random.Range(minTimeToEscape, maxTimeToEscape));
                     if (behaviour != null)
                     {
                         behaviour.EscapePen();

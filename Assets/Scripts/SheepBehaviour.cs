@@ -13,6 +13,7 @@ public class SheepBehaviour : MonoBehaviour
     [SerializeField] float flungRecoveryTime = 3.5f;
     
     GameObject Perimeter;
+    GameObject grabbedBy;
     Transform pos1;
     Transform pos2;
     Rigidbody2D sheep;
@@ -53,6 +54,10 @@ public class SheepBehaviour : MonoBehaviour
         if (!isEscaped)
         {
             sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * Time.deltaTime));
+        }
+        if (numOfEscaped < 0)
+        {
+            numOfEscaped = 0;
         }
     }
 
@@ -144,6 +149,7 @@ public class SheepBehaviour : MonoBehaviour
         {
             this.isEscaped = isEscaped;
             numOfEscaped += 1;
+            Debug.Log("num of sheep escapes: " + numOfEscaped);
         }
         else
         {
@@ -175,5 +181,22 @@ public class SheepBehaviour : MonoBehaviour
     public bool getIsKidnapped()
     {
         return isKidnapped;
+    }
+
+    public void SetGrabbedBy(GameObject bandit)
+    {
+        grabbedBy = bandit;
+    }
+
+    public GameObject GetGrabbedBy()
+    {
+        if (grabbedBy != null)
+        {
+            return grabbedBy;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

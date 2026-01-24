@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Data.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class BanditBehaviour : MonoBehaviour
     SheepEscapeManager escapeManager;
     SheepBehaviour sheepBehaviour;
     Rigidbody2D bandit;
+    Rigidbody2D sheepRb;
     GameObject currentTarget;
     GameObject grabbedSheep;
 
@@ -38,20 +40,23 @@ public class BanditBehaviour : MonoBehaviour
         bandit = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!isRecovering)
         {
-            if(grabbedSheep == null)
+            if(currentTarget != null && grabbedSheep == null)
             {
-                if (currentTarget != null && escapeManager.sheepList.Contains(currentTarget) && !sheepBehaviour.getIsKidnapped())
+                if (escapeManager.sheepList.Contains(currentTarget) && !sheepBehaviour.getIsKidnapped() && !sheepBehaviour.getIsEscape())
                 {
                     chaseSheep();
                 }
                 else
                 {
                     currentTarget = chooseSheep();
-                    sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
+                    if(currentTarget != null)
+                    {
+                        sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
+                    }
                 }
             }
             else
@@ -67,8 +72,12 @@ public class BanditBehaviour : MonoBehaviour
         if (collision.CompareTag("SheepHoldingBox") && collision.transform.parent.gameObject == currentTarget)
         {
             sheepBehaviour.setIsEscaped(true);
+            sheepBehaviour.SetGrabbedBy(gameObject);
             grabbedSheep = currentTarget;
+            sheepRb = grabbedSheep.GetComponent<Rigidbody2D>();
             gameObject.GetComponent<Lassoable>().enabled = false;
+            gameObject.GetComponent<Collider2D>().enabled = false;
+
         }
     }
 
@@ -95,15 +104,15 @@ public class BanditBehaviour : MonoBehaviour
     void chaseSheep()
     {
         Vector2 direction = (currentTarget.transform.position - transform.position).normalized;
-
         bandit.linearVelocity = direction * speed;
     }
 
     public void SnapSheep()
     {
-        if (grabbedSheep != null)
+        if (grabbedSheep != null && sheepRb != null)
         {
-            currentTarget.transform.position = transform.position;
+            sheepRb.MovePosition(transform.position);
+            Debug.Log("grabbed");
         }
     }
 
@@ -116,6 +125,7 @@ public class BanditBehaviour : MonoBehaviour
         sheepBehaviour.setIsRecovering(true);
         grabbedSheep = null;
         currentTarget = null;
+        Debug.Log("dropped");
         //code to play kill  animation
         Invoke("killBandit", timeToDie);
     }

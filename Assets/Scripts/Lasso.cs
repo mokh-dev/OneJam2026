@@ -71,6 +71,7 @@ public class Lasso : MonoBehaviour
         if (caughtObj != null) return;
         if (PlayerScript.IsHoldingMouseDown == false) return;
         if (collision.gameObject.TryGetComponent<Lassoable>(out caughtObj) == false) return;
+        if (caughtObj.GetComponent<Lassoable>().isActiveAndEnabled == false) return;
 
         LassoCaughtObj();
     }
