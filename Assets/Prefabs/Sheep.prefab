@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8745397062544023768}
   - component: {fileID: 5537684228540254913}
   - component: {fileID: 6241152751635478040}
+  - component: {fileID: 45510194162094509}
   m_Layer: 3
   m_Name: Sheep
   m_TagString: Untagged
@@ -133,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9570401887f30ca47a4d82ed6e70faf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  speed: 5
+  speed: 1
   maxAngle: 15
   minAngle: 7.5
   minIdleTime: 1
@@ -175,3 +176,15 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0.15}
   m_Size: {x: 1.0000002, y: 1.0000002}
   m_Direction: 0
+--- !u!114 &45510194162094509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9055571230372158398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 086b7b793886b854b86abeb95cbafdff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lassoable

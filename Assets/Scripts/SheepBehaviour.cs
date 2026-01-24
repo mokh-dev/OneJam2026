@@ -9,6 +9,7 @@ public class SheepBehaviour : MonoBehaviour
     [SerializeField] float minAngle = 5f;
     [SerializeField] float minIdleTime = 1f;
     [SerializeField] float maxIdleTime = 3f;
+    [SerializeField] float flungRecoveryTime = 3.5f;
     
     GameObject Perimeter;
     Transform pos1;

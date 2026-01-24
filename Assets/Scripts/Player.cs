@@ -1,6 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
+
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -33,6 +32,8 @@ public class Player : MonoBehaviour
     private int previousMouseQuadrant;
     private int currentSpunMouseQuadrant;
     private int previousSpunMouseQuadrant;
+    private Vector2 currentMousePos;
+    private Vector2 previousMousePos;
 
     private GameObject grabbedObj;
     private SpriteRenderer ropeSR;
@@ -60,6 +61,9 @@ public class Player : MonoBehaviour
 
         IsHoldingMouseDown = Input.GetButton("Fire1");
 
+        if (Input.GetButtonDown("Fire1")) MouseDown();
+        if (Input.GetButtonUp("Fire1")) MouseUp();
+
 
         if (holdingLasso == false) DrawRope();
         
@@ -77,7 +81,7 @@ public class Player : MonoBehaviour
 
 
 
-    public void OnGroundMouseDown(PointerEventData eventData)
+    private void MouseDown()
     {
         Vector2 pointingVector = (GetMousePosition() - (Vector2)transform.position).normalized;  
 
@@ -88,7 +92,7 @@ public class Player : MonoBehaviour
 
         }      
     }
-    public void OnGroundMouseUp(PointerEventData eventData)
+    public void MouseUp()
     {
         if (lassoIsSpinning == true) FlingObject();
         
@@ -119,12 +123,16 @@ public class Player : MonoBehaviour
         previousMouseQuadrant = currentMouseQuadrant;
         currentMouseQuadrant = GetCurrentMouseQuadrant(GetMousePosition());
 
-        if (initialMouseQuadrant == currentMouseQuadrant && currentSpunMouseQuadrant == 0) return;
+        previousMousePos = currentMousePos;
+        currentMousePos = GetMousePosition();
 
-        if (currentMouseQuadrant != previousMouseQuadrant)
-        {
-            MouseSpin();   
-        }
+        if (initialMouseQuadrant == currentMouseQuadrant && currentSpunMouseQuadrant == 0) return;
+        if (currentMouseQuadrant == previousMouseQuadrant) return;
+        if (currentMousePos == previousMousePos) return;
+
+
+        MouseSpin();   
+        
     }
     
     private void MouseSpin()
@@ -278,6 +286,6 @@ public class Player : MonoBehaviour
 
     private Vector2 GetMousePosition()
     {
-        return cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        return cam.ScreenToWorldPoint(Input.mousePosition);
     }
 }

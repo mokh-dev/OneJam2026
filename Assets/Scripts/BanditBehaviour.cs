@@ -5,6 +5,8 @@ public class BanditBehaviour : MonoBehaviour
     [SerializeField] float speed = 5f;
     [SerializeField] float maxAngle = 15f;
     [SerializeField] float minAngle = 5f;
+    [SerializeField] float flungRecoveryTime = 3.5f;
+
     
     Rigidbody2D bandit;
 
