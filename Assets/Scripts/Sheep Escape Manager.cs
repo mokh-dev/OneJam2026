@@ -10,14 +10,14 @@ public class SheepEscapeManager : MonoBehaviour
     
 
     public List<GameObject> sheepList = new List<GameObject>();
-    public static SheepEscapeManager SheepManager;
+    public static SheepEscapeManager Instance;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
-        if (SheepManager == null)
+        if (Instance == null)
         {
-            SheepManager = this;
+            Instance = this;
         }
         else
         {
@@ -42,16 +42,6 @@ public class SheepEscapeManager : MonoBehaviour
         if (sheepList.Contains(sheep))
         {
             sheepList.Remove(sheep);
-        }
-    }
-
-    public void killSheep(GameObject sheep)
-    {
-        if (sheepList.Contains(sheep))
-        {
-            sheepList.Remove(sheep);
-            Destroy(sheep);
-            SheepBehaviour.numOfEscaped -= 1;
         }
     }
 

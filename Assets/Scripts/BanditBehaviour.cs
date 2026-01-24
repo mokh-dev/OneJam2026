@@ -7,8 +7,10 @@ public class BanditBehaviour : MonoBehaviour
     [SerializeField] float minAngle = 5f;
     [SerializeField] float flungRecoveryTime = 3.5f;
 
-    
+    SheepEscapeManager escapeManager;
+    SheepBehaviour sheepBehaviour;
     Rigidbody2D bandit;
+    GameObject currentTarget;
 
     Vector2 banditRotation;
     float maxRad;
@@ -21,46 +23,52 @@ public class BanditBehaviour : MonoBehaviour
         //changes angles to rads for ease of use
         maxRad = Mathf.Deg2Rad * maxAngle;
         minRad = Mathf.Deg2Rad * minAngle;
+        escapeManager = SheepEscapeManager.Instance;
+        currentTarget = chooseSheep();
+        sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
 
         //decides the sheeps direction of movement
         bandit = GetComponent<Rigidbody2D>();
-        banditPositionY = bandit.transform.position.y;
-        angleBehaviour();
-
-        bandit.linearVelocity = banditRotation * speed; //makes the sheep move with the chosen angle
     }
 
-    //calculates and chooses a suitable angle for the sheep
-    void angleBehaviour()
+    void Update()
     {
-        isStraight = Random.Range(0, 2) == 1; //gives a 50% chance for the sheep to move straight
-
-        float randomAngle = Random.Range(minRad, maxRad); //chooses angle of the sheep (incase isStraight is false)
-        
-        //if the sheep is in the upper half of the screen, makes it move down (if not straight)
-        if (!isStraight && banditPositionY > 1)
+        if (escapeManager.sheepList.Contains(currentTarget) && !sheepBehaviour.getIsKidnapped())
         {
-            banditRotation = new Vector2(Mathf.Cos(randomAngle), -Mathf.Sin(randomAngle));
+            chaseSheep();
         }
-
-        //if the sheep is in the lower half of the screen, makes it move up (if not straight)
-        else if (!isStraight && banditPositionY < -1)
-        {
-            banditRotation = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
-        }
-
-        //if the sheep is around the middle of the screen, it can either move up or down (if not straight)
-        else if (!isStraight)
-        {
-            int posOrNeg = (Random.value > 0.5f) ? -1:1;
-            banditRotation = new Vector2(Mathf.Cos(randomAngle), posOrNeg * Mathf.Sin(randomAngle));
-        }
-
-        //if the sheep is supposed to be straight, sets its angle accordingly
         else
         {
-            banditRotation = new Vector2 (1, 0);
+            currentTarget = chooseSheep();
+            sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
         }
+    }
+
+    void runBack()
+    {
+        bandit.linearVelocity = Vector2.left * speed;
+    }
+
+    GameObject chooseSheep()
+    {
+        if (escapeManager.sheepList.Count != 0)
+        {
+            int randomIndex = Random.Range(0, escapeManager.sheepList.Count);
+            GameObject chosenSheep = escapeManager.sheepList[randomIndex];
+            return chosenSheep;
+        }
+        else
+        {
+            Debug.Log("couldnt find sheep");
+            return null;
+        }
+    }
+
+    void chaseSheep()
+    {
+        Vector2 direction = (currentTarget.transform.position - transform.position).normalized;
+
+        bandit.linearVelocity = direction * speed;
     }
 }
 

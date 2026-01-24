@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class SheepBehaviour : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class SheepBehaviour : MonoBehaviour
     Transform pos1;
     Transform pos2;
     Rigidbody2D sheep;
+    SheepEscapeManager escapeManager;
 
     Vector2 randomPosition;
     Vector2 sheepAngle;
@@ -23,6 +25,7 @@ public class SheepBehaviour : MonoBehaviour
     float sheepPositionY;
     bool isStraight;
     bool isTargeted = false;
+    bool isKidnapped = false;
     bool isEscaped = false;
 
     public static int numOfEscaped = 0;
@@ -40,6 +43,7 @@ public class SheepBehaviour : MonoBehaviour
 
     void Start()
     {
+        escapeManager = SheepEscapeManager.Instance;
         StartCoroutine(ChooseRandomPosition());
     }
 
@@ -54,7 +58,11 @@ public class SheepBehaviour : MonoBehaviour
     //calculates and chooses a suitable angle for the sheep to escape through
     public void EscapePen()
     {
-        isEscaped = true;
+        if (isEscaped == false)
+        {
+            setIsEscaped(true);
+        }
+        
         isStraight = Random.Range(0, 2) == 1; //gives a 50% chance for the sheep to move straight
 
         float randomAngle = Random.Range(minRad, maxRad); //chooses angle of the sheep (incase isStraight is false)
@@ -83,7 +91,7 @@ public class SheepBehaviour : MonoBehaviour
             sheepAngle = new Vector2 (-1, 0);
         }
         
-        numOfEscaped += 1;
+        escapeManager.removeSheepFromList(gameObject);
         sheep.linearVelocity = sheepAngle * speed; //makes the sheep move with the chosen angle
     }
 
@@ -91,8 +99,8 @@ public class SheepBehaviour : MonoBehaviour
     {
         if (other.CompareTag("Perimeter") && isEscaped)
         {
-            isEscaped = false;
-            numOfEscaped -= 1;
+            setIsEscaped(false);
+            escapeManager.addSheepToList(gameObject);
             sheep.linearVelocity = Vector2.zero;
         }
     }
@@ -110,9 +118,37 @@ public class SheepBehaviour : MonoBehaviour
         }
     }
 
+    public void killSheep()
+    {
+        SheepBehaviour behaviour = gameObject.GetComponent<SheepBehaviour>();
+        if (escapeManager.sheepList.Contains(gameObject))
+        {
+            escapeManager.removeSheepFromList(gameObject);
+            Destroy(gameObject);
+        }
+        else if (behaviour.getIsEscape() == true)
+        {
+            SheepBehaviour.numOfEscaped -=1;
+            Destroy(gameObject);
+        }
+        else if (behaviour.getIsKidnapped() == true)
+        {
+            Destroy(gameObject);
+        }
+    }    
+
     public void setIsEscaped(bool isEscaped)
     {
-        this.isEscaped = isEscaped;
+        if (isEscaped == true)
+        {
+            this.isEscaped = isEscaped;
+            numOfEscaped += 1;
+        }
+        else
+        {
+            this.isEscaped = isEscaped;
+            numOfEscaped -= 1;
+        }
     }
 
     public bool getIsEscape()
@@ -128,5 +164,15 @@ public class SheepBehaviour : MonoBehaviour
     public bool getIsTargeted()
     {
         return isTargeted;
+    }
+
+    public void setIsKidnapped(bool isKidnapped)
+    {
+        this.isKidnapped = isKidnapped;
+    }
+
+    public bool getIsKidnapped()
+    {
+        return isKidnapped;
     }
 }
