@@ -118,8 +118,14 @@ public class SheepBehaviour : MonoBehaviour
             {
                 setIsEscaped(false);
             }
-            escapeManager.addSheepToList(gameObject);
-            sheep.linearVelocity = Vector2.zero;
+            if (escapeManager != null)
+            {
+                escapeManager.addSheepToList(gameObject);
+            }
+            if  (sheep != null)
+            {
+                sheep.linearVelocity = Vector2.zero;
+            }
         }
     }
 
