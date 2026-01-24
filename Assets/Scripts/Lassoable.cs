@@ -9,11 +9,19 @@ public class Lassoable : MonoBehaviour
     {
         isCaught = true;
         connectedLasso = lasso;
+        if(gameObject.TryGetComponent<BanditBehaviour>(out BanditBehaviour banditBehaviour) == true)
+        {
+            banditBehaviour.setIsRecovering(true);
+        }
     }
 
     public void LassoLetGo()
     {
         isCaught = false;
+        if(gameObject.TryGetComponent<BanditBehaviour>(out BanditBehaviour banditBehaviour) == true)
+        {
+            StartCoroutine(banditBehaviour.StartRecovery());
+        }
     }
 
 

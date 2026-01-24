@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -122,6 +123,22 @@ public class BanditBehaviour : MonoBehaviour
     void killBandit()
     {
         Destroy(gameObject);
+    }
+
+    public void setIsRecovering(bool isRecovering)
+    {
+        this.isRecovering = isRecovering;
+    }
+
+    public IEnumerator StartRecovery()
+    {
+        yield return new WaitForSeconds(flungRecoveryTime);
+        isRecovering = false;
+    }
+
+    public bool getIsRecovering()
+    {
+        return isRecovering;
     }
 }
 
