@@ -70,5 +70,16 @@ public class BanditBehaviour : MonoBehaviour
 
         bandit.linearVelocity = direction * speed;
     }
+
+    public void GrabSheep()
+    {
+        Rigidbody2D sheepRb = currentTarget.GetComponent<Rigidbody2D>();
+        currentTarget.transform.position = transform.position;
+    }
+
+    public void DropSheep()
+    {
+        
+    }
 }
 
