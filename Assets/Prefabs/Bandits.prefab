@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 2491271674725654672, guid: a7c8ea16d5ab1be46895e576e9a156e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,6 +110,7 @@ MonoBehaviour:
   speed: 1
   maxAngle: 15
   minAngle: 5
+  flungRecoveryTime: 3.5
 --- !u!50 &3486409863771218850
 Rigidbody2D:
   serializedVersion: 5
@@ -136,7 +137,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &1585529933255836083
 MonoBehaviour:
   m_ObjectHideFlags: 0

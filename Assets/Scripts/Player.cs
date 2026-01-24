@@ -114,7 +114,7 @@ public class Player : MonoBehaviour
         _ropeObj.transform.rotation = ropeRotation;
 
         float lassoDistance = Vector2.Distance(transform.position, activeLasso.transform.position);
-        ropeSR.size = new Vector2(lassoDistance, 1);
+        ropeSR.size = new Vector2(lassoDistance, ropeSR.size.y);
     }
 
 
@@ -214,7 +214,7 @@ public class Player : MonoBehaviour
         activeLasso = null;
 
         holdingLasso = true;
-        ropeSR.size = new Vector2(0, 1);
+        ropeSR.size = new Vector2(0, ropeSR.size.y);
     }
 
     private void FlingObject()
