@@ -40,7 +40,7 @@ public class SheepSpawn : MonoBehaviour
             float posY = Random.Range(pos1.position.y, pos2.position.y);
             Vector2 spawnPosition = new Vector2(posX, posY);
 
-            GameObject newSheep = Instantiate(sheep, spawnPosition, Quaternion.Euler(0, 0, 90)); //spawns the sheep
+            GameObject newSheep = Instantiate(sheep, spawnPosition, Quaternion.Euler(0, 0, 0)); //spawns the sheep
             escapeManager.addSheepToList(newSheep);
         }
     }

@@ -24,7 +24,8 @@ public class SheepBehaviour : MonoBehaviour
     float minRad;
     float sheepPositionY;
     bool isStraight;
-    bool isTargeted = false;
+    bool isCaught = false;
+    bool isRecovering = false;
     bool isKidnapped = false;
     bool isEscaped = false;
 
@@ -62,7 +63,7 @@ public class SheepBehaviour : MonoBehaviour
         {
             setIsEscaped(true);
         }
-        
+
         isStraight = Random.Range(0, 2) == 1; //gives a 50% chance for the sheep to move straight
 
         float randomAngle = Random.Range(minRad, maxRad); //chooses angle of the sheep (incase isStraight is false)
@@ -156,14 +157,14 @@ public class SheepBehaviour : MonoBehaviour
         return this.isEscaped;
     }
 
-    public void setIsTargeted(bool isTargeted)
+    public void setIsRecovering(bool isRecovering)
     {
-        this.isTargeted = isTargeted;
+        this.isRecovering = isRecovering;
     }
 
-    public bool getIsTargeted()
+    public bool getIsRecovering()
     {
-        return isTargeted;
+        return isRecovering;
     }
 
     public void setIsKidnapped(bool isKidnapped)

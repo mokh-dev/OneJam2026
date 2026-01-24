@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BanditBehaviour : MonoBehaviour
@@ -5,17 +6,20 @@ public class BanditBehaviour : MonoBehaviour
     [SerializeField] float speed = 5f;
     [SerializeField] float maxAngle = 15f;
     [SerializeField] float minAngle = 5f;
+    [SerializeField] float timeToDie = 2f;
     [SerializeField] float flungRecoveryTime = 3.5f;
 
     SheepEscapeManager escapeManager;
     SheepBehaviour sheepBehaviour;
     Rigidbody2D bandit;
     GameObject currentTarget;
+    GameObject grabbedSheep;
 
     Vector2 banditRotation;
     float maxRad;
     float minRad;
     float banditPositionY;
+    bool isRecovering;
     bool isStraight;
 
     void Start()
@@ -25,22 +29,45 @@ public class BanditBehaviour : MonoBehaviour
         minRad = Mathf.Deg2Rad * minAngle;
         escapeManager = SheepEscapeManager.Instance;
         currentTarget = chooseSheep();
-        sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
-
+        if (currentTarget != null)
+        {
+            sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
+        }
         //decides the sheeps direction of movement
         bandit = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
-        if (escapeManager.sheepList.Contains(currentTarget) && !sheepBehaviour.getIsKidnapped())
+        if (!isRecovering)
         {
-            chaseSheep();
+            if(grabbedSheep == null)
+            {
+                if (currentTarget != null && escapeManager.sheepList.Contains(currentTarget) && !sheepBehaviour.getIsKidnapped())
+                {
+                    chaseSheep();
+                }
+                else
+                {
+                    currentTarget = chooseSheep();
+                    sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
+                }
+            }
+            else
+            {
+                SnapSheep();
+                runBack();
+            }
         }
-        else
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("SheepHoldingBox") && collision.transform.parent.gameObject == currentTarget)
         {
-            currentTarget = chooseSheep();
-            sheepBehaviour = currentTarget.GetComponent<SheepBehaviour>();
+            sheepBehaviour.setIsEscaped(true);
+            grabbedSheep = currentTarget;
+            gameObject.GetComponent<Lassoable>().enabled = false;
         }
     }
 
@@ -71,15 +98,30 @@ public class BanditBehaviour : MonoBehaviour
         bandit.linearVelocity = direction * speed;
     }
 
-    public void GrabSheep()
+    public void SnapSheep()
     {
-        Rigidbody2D sheepRb = currentTarget.GetComponent<Rigidbody2D>();
-        currentTarget.transform.position = transform.position;
+        if (grabbedSheep != null)
+        {
+            currentTarget.transform.position = transform.position;
+        }
     }
 
     public void DropSheep()
     {
-        
+        gameObject.GetComponent<Collider2D>().enabled = false;
+        bandit.linearVelocity = Vector2.zero;
+        isRecovering = true;
+        sheepBehaviour.setIsEscaped(false);
+        sheepBehaviour.setIsRecovering(true);
+        grabbedSheep = null;
+        currentTarget = null;
+        //code to play kill  animation
+        Invoke("killBandit", timeToDie);
+    }
+
+    void killBandit()
+    {
+        Destroy(gameObject);
     }
 }
 
