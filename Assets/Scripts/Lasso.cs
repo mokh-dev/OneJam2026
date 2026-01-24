@@ -9,7 +9,7 @@ public class Lasso : MonoBehaviour
     private Rigidbody2D playerRB;
     private Lassoable caughtObj;
 
-    //private HingeJoint2D lassoJoint;
+    private HingeJoint2D lassoJoint;
 
 
     bool isSpinning;
@@ -17,7 +17,7 @@ public class Lasso : MonoBehaviour
 
     private void Awake()
     {
-        //lassoJoint = gameObject.GetComponent<HingeJoint2D>();
+        lassoJoint = gameObject.GetComponent<HingeJoint2D>();
         lassoRB = gameObject.GetComponent<Rigidbody2D>();
     }
 
@@ -37,8 +37,8 @@ public class Lasso : MonoBehaviour
         caughtObj.GetComponent<Rigidbody2D>().AddForce(-transform.right * flingForce, ForceMode2D.Impulse);
         caughtObj = null;
 
-        //lassoJoint.enabled = false;
-        //lassoJoint.connectedBody = null;
+        lassoJoint.enabled = false;
+        lassoJoint.connectedBody = null;
     }
 
     public void PlayerDropped()
@@ -46,8 +46,8 @@ public class Lasso : MonoBehaviour
         caughtObj.LassoLetGo();
         caughtObj = null;
 
-        //lassoJoint.enabled = false;
-        //lassoJoint.connectedBody = null;
+        lassoJoint.enabled = false;
+        lassoJoint.connectedBody = null;
     }
 
     private void LassoCaughtObj()
@@ -55,10 +55,10 @@ public class Lasso : MonoBehaviour
         caughtObj.LassoConnected(this);
 
         PlayerScript.LassoGrabbed(caughtObj);
-        //lassoJoint.enabled = true;
+        lassoJoint.enabled = true;
 
         playerRB = PlayerScript.gameObject.GetComponent<Rigidbody2D>();
-        //lassoJoint.connectedBody = playerRB;
+        lassoJoint.connectedBody = playerRB;
     } 
 
     public void StartedSpinning()
