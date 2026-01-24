@@ -3,6 +3,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+
+//MESSAGE FOR MK, THE ANIMATION SCRIPT SHOULD BE ADDED IN THE ISRECOVERING METHOD
+
 public class SheepBehaviour : MonoBehaviour
 {
     [SerializeField] float speed = 5f;
@@ -21,6 +24,7 @@ public class SheepBehaviour : MonoBehaviour
 
     Vector2 randomPosition;
     Vector2 sheepAngle;
+    Vector2 escapeDirection;
     float maxRad;
     float minRad;
     float sheepPositionY;
@@ -51,10 +55,15 @@ public class SheepBehaviour : MonoBehaviour
 
     void Update()
     {
-        if (!isEscaped)
+        if (!isEscaped && !isRecovering)
         {
-            sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * Time.deltaTime));
+            sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * 2 * Time.deltaTime));
         }
+        else if (isEscaped && !isRecovering)
+        {
+            sheep.linearVelocity = escapeDirection * speed;
+        }
+
         if (numOfEscaped < 0)
         {
             numOfEscaped = 0;
@@ -97,15 +106,18 @@ public class SheepBehaviour : MonoBehaviour
             sheepAngle = new Vector2 (-1, 0);
         }
         
+        escapeDirection = sheepAngle;
         escapeManager.removeSheepFromList(gameObject);
-        sheep.linearVelocity = sheepAngle * speed; //makes the sheep move with the chosen angle
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Perimeter") && isEscaped)
+        if (other.CompareTag("Perimeter"))
         {
-            setIsEscaped(false);
+            if (isEscaped)
+            {
+                setIsEscaped(false);
+            }
             escapeManager.addSheepToList(gameObject);
             sheep.linearVelocity = Vector2.zero;
         }
@@ -165,6 +177,10 @@ public class SheepBehaviour : MonoBehaviour
 
     public void setIsRecovering(bool isRecovering)
     {
+        if (!this.isRecovering)
+        {
+            //play the fall over animation
+        }
         this.isRecovering = isRecovering;
     }
 
@@ -198,5 +214,11 @@ public class SheepBehaviour : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public IEnumerator StartRecovery()
+    {
+        yield return new WaitForSeconds(flungRecoveryTime);
+        isRecovering = false;
     }
 }

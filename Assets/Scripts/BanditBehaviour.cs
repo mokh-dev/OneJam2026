@@ -3,6 +3,9 @@ using System.Data.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 
+
+//MESSAGE FOR MK, THE ANIMATION SCRIPT SHOULD BE ADDED IN THE DROPSHEEP METHOD
+
 public class BanditBehaviour : MonoBehaviour
 {
     [SerializeField] float speed = 5f;
@@ -72,6 +75,7 @@ public class BanditBehaviour : MonoBehaviour
         if (collision.CompareTag("SheepHoldingBox") && collision.transform.parent.gameObject == currentTarget)
         {
             sheepBehaviour.setIsEscaped(true);
+            sheepBehaviour.setIsRecovering(true);
             sheepBehaviour.SetGrabbedBy(gameObject);
             grabbedSheep = currentTarget;
             sheepRb = grabbedSheep.GetComponent<Rigidbody2D>();

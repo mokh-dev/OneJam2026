@@ -19,7 +19,6 @@ public class Lassoable : MonoBehaviour
             if (sheepBehaviour.GetGrabbedBy() != null)
             {
                 sheepBehaviour.GetGrabbedBy().GetComponent<BanditBehaviour>().DropSheep();
-                Debug.Log("running");
             }
             sheepBehaviour.setIsRecovering(true);
         }
@@ -27,6 +26,14 @@ public class Lassoable : MonoBehaviour
 
     public void LassoLetGo()
     {
+        if(gameObject.TryGetComponent<SheepBehaviour>(out SheepBehaviour sheepBehaviour) == true)
+        {
+            if (sheepBehaviour.GetGrabbedBy() != null)
+            {
+                sheepBehaviour.GetGrabbedBy().GetComponent<BanditBehaviour>().DropSheep();
+            }
+            StartCoroutine(sheepBehaviour.StartRecovery());
+        }
         isCaught = false;
         if(gameObject.TryGetComponent<BanditBehaviour>(out BanditBehaviour banditBehaviour) == true)
         {
