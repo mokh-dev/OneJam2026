@@ -25,7 +25,7 @@ public class Lasso : MonoBehaviour
     {
         if (isSpinning == true)
         {
-            lassoRB.SetRotation(PlayerScript.AnchorRB.rotation);
+            //lassoRB.SetRotation(PlayerScript.AnchorRB.rotation);
         }
     }
 
@@ -34,6 +34,8 @@ public class Lasso : MonoBehaviour
         isSpinning = false;
 
         caughtObj.LassoLetGo();
+        caughtObj.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+        Debug.Log(transform.TransformDirection(-transform.right));
         caughtObj.GetComponent<Rigidbody2D>().AddForce(-transform.right * flingForce, ForceMode2D.Impulse);
         caughtObj = null;
 
