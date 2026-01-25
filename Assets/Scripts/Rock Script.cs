@@ -52,6 +52,7 @@ public class RockScript : MonoBehaviour
         if (!isColliding)
         {
             gameObject.layer = rockFlyingLayer;
+            Debug.Log("im flying");
             isColliding = true;
         }
     }
