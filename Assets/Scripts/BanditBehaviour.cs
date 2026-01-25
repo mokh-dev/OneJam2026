@@ -19,24 +19,24 @@ public class BanditBehaviour : MonoBehaviour
     SheepBehaviour sheepBehaviour;
     Rigidbody2D bandit;
     Rigidbody2D sheepRb;
+    SpriteRenderer banditSR;
     GameObject currentTarget;
     GameObject grabbedSheep;
     Animator banditAnim;
 
     Vector2 banditRotation;
-    float maxRad;
-    float minRad;
-    float banditPositionY;
+    Color originalColor;
+    int rockFlyingLayer;
+    float impactForce;
     bool isRecovering;
-    bool isStraight;
 
     void Start()
     {
         banditAnim = gameObject.GetComponent<Animator>();
 
-        //changes angles to rads for ease of use
-        maxRad = Mathf.Deg2Rad * maxAngle;
-        minRad = Mathf.Deg2Rad * minAngle;
+        banditSR = GetComponent<SpriteRenderer>();
+        originalColor = banditSR.color;
+        rockFlyingLayer = LayerMask.NameToLayer("RockFlying");
         escapeManager = SheepEscapeManager.Instance;
         currentTarget = chooseSheep();
         if (currentTarget != null)
@@ -99,25 +99,13 @@ public class BanditBehaviour : MonoBehaviour
         }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------
+//Custom Methods
     void runBack()
     {
         gameObject.GetComponent<SpriteRenderer>().flipX = false;
         bandit.linearVelocity = Vector2.left * speed;
-    }
-
-    GameObject chooseSheep()
-    {
-        if (escapeManager.sheepList.Count != 0)
-        {
-            int randomIndex = Random.Range(0, escapeManager.sheepList.Count);
-            GameObject chosenSheep = escapeManager.sheepList[randomIndex];
-            return chosenSheep;
-        }
-        else
-        {
-            Debug.Log("couldnt find sheep");
-            return null;
-        }
     }
 
     void chaseSheep()
@@ -155,15 +143,51 @@ public class BanditBehaviour : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void setIsRecovering(bool isRecovering)
+    GameObject chooseSheep()
     {
-        this.isRecovering = isRecovering;
+        if (escapeManager.sheepList.Count != 0)
+        {
+            int randomIndex = Random.Range(0, escapeManager.sheepList.Count);
+            GameObject chosenSheep = escapeManager.sheepList[randomIndex];
+            return chosenSheep;
+        }
+        else
+        {
+            Debug.Log("couldnt find sheep");
+            return null;
+        }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------
+//IEnumerators
     public IEnumerator StartRecovery()
     {
         yield return new WaitForSeconds(flungRecoveryTime);
         isRecovering = false;
+    }
+
+    public IEnumerator ApplyImpactDrag()
+    {
+        if (bandit != null)
+        {
+            float originalDrag = bandit.linearDamping;
+            bandit.linearDamping = 0;
+            banditSR.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            banditSR.color = originalColor;
+            bandit.linearDamping = 5f;
+            yield return new WaitForSeconds(2);
+            bandit.linearDamping = originalDrag;
+        }
+    }
+
+
+//----------------------------------------------------------------------------------------------------------------
+//setters and getters
+    public void setIsRecovering(bool isRecovering)
+    {
+        this.isRecovering = isRecovering;
     }
 
     public bool getIsRecovering()
