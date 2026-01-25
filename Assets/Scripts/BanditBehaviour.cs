@@ -96,7 +96,8 @@ public class BanditBehaviour : MonoBehaviour
 
             if (impactForce > 5f)
             {
-                killBandit();
+                setIsRecovering(true);
+                StartRecovery();
             }
         }
     }
@@ -143,6 +144,7 @@ public class BanditBehaviour : MonoBehaviour
         isRecovering = true;
         sheepBehaviour.setIsEscaped(false);
         sheepBehaviour.setIsRecovering(true);
+        sheepBehaviour.SetGrabbedBy(null);
         grabbedSheep = null;
         currentTarget = null;
         Debug.Log("dropped");

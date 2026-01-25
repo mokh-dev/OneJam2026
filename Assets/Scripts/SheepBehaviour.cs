@@ -28,6 +28,7 @@ public class SheepBehaviour : MonoBehaviour
     float maxRad;
     float minRad;
     float sheepPositionY;
+    int rockFlyingLayer;
     bool isStraight;
     bool isCaught = false;
     bool isRecovering = false;
@@ -49,6 +50,7 @@ public class SheepBehaviour : MonoBehaviour
 
     void Start()
     {
+        rockFlyingLayer = LayerMask.NameToLayer("RockFlying");
         escapeManager = SheepEscapeManager.Instance;
         StartCoroutine(ChooseRandomPosition());
     }
@@ -67,6 +69,24 @@ public class SheepBehaviour : MonoBehaviour
         if (numOfEscaped < 0)
         {
             numOfEscaped = 0;
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == rockFlyingLayer)
+        {
+            float impactForce = collision.relativeVelocity.magnitude;
+
+            if (impactForce > 5f)
+            {
+                if(GetGrabbedBy() != null)
+                {
+                    GetGrabbedBy().GetComponent<BanditBehaviour>().DropSheep();
+                }
+                setIsRecovering(true);
+                StartRecovery();
+            }
         }
     }
 
