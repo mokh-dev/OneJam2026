@@ -20,6 +20,8 @@ public class SheepBehaviour : MonoBehaviour
     Transform pos1;
     Transform pos2;
     Rigidbody2D sheep;
+    SpriteRenderer sheepSR;
+    Color originalColor;
     SheepEscapeManager escapeManager;
 
     Vector2 randomPosition;
@@ -30,19 +32,22 @@ public class SheepBehaviour : MonoBehaviour
     float sheepPositionY;
     int rockFlyingLayer;
     bool isStraight;
-    bool isCaught = false;
+    bool inPen;
     bool isRecovering = false;
     bool isKidnapped = false;
     bool isEscaped = false;
 
     public static int numOfEscaped = 0;
 
+//----------------------------------------------------------------------------------------------------------------
     void Awake()
     {
         //changes angles to rads for ease of use
         maxRad = Mathf.Deg2Rad * maxAngle;
         minRad = Mathf.Deg2Rad * minAngle;
         sheep = GetComponent<Rigidbody2D>();
+        sheepSR = GetComponent<SpriteRenderer>();
+        originalColor = sheepSR.color;
         Perimeter = GameObject.FindGameObjectWithTag("Perimeter");
         pos1 = Perimeter.transform.GetChild(0);
         pos2 = Perimeter.transform.GetChild(1);
@@ -57,13 +62,16 @@ public class SheepBehaviour : MonoBehaviour
 
     void Update()
     {
-        if (!isEscaped && !isRecovering)
+        if (!isRecovering)
         {
-            sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * 2 * Time.deltaTime));
-        }
-        else if (isEscaped && !isRecovering)
-        {
-            sheep.linearVelocity = escapeDirection * speed;
+            if (!isEscaped)
+            {
+                sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * 2 * Time.deltaTime));
+            }
+            else if (isEscaped)
+            {
+                sheep.linearVelocity = escapeDirection * speed;
+            }
         }
 
         if (numOfEscaped < 0)
@@ -72,6 +80,9 @@ public class SheepBehaviour : MonoBehaviour
         }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------
+//Collisions and Triggers
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == rockFlyingLayer)
@@ -85,11 +96,55 @@ public class SheepBehaviour : MonoBehaviour
                     GetGrabbedBy().GetComponent<BanditBehaviour>().DropSheep();
                 }
                 setIsRecovering(true);
-                StartRecovery();
+                StartCoroutine(ApplyImpactDrag());
+                StartCoroutine(StartRecovery());
             }
         }
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Perimeter"))
+        {
+            if (isEscaped)
+            {
+                setIsEscaped(false);
+            }
+            if (escapeManager != null)
+            {
+                escapeManager.addSheepToList(gameObject);
+            }
+            if  (sheep != null)
+            {
+                sheep.linearVelocity = Vector2.zero;
+            }
+
+            if(other.CompareTag("KillZone"))
+            {
+                killSheep();
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Perimeter"))
+        {
+            inPen = false;
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Perimeter") && !inPen)
+        {
+            inPen = true;
+        }
+    }
+
+
+//----------------------------------------------------------------------------------------------------------------
+//Custom Methods
     //calculates and chooses a suitable angle for the sheep to escape through
     public void EscapePen()
     {
@@ -130,38 +185,6 @@ public class SheepBehaviour : MonoBehaviour
         escapeManager.removeSheepFromList(gameObject);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Perimeter"))
-        {
-            if (isEscaped)
-            {
-                setIsEscaped(false);
-            }
-            if (escapeManager != null)
-            {
-                escapeManager.addSheepToList(gameObject);
-            }
-            if  (sheep != null)
-            {
-                sheep.linearVelocity = Vector2.zero;
-            }
-        }
-    }
-
-    IEnumerator ChooseRandomPosition()
-    {
-        while (true)
-        {
-            float posX = Random.Range(pos1.position.x, pos2.position.x);
-            float posY = Random.Range(pos1.position.y, pos2.position.y);
-            randomPosition = new(posX, posY);
-            float timeIdled = Random.Range(minIdleTime, maxIdleTime);
-            yield return new WaitUntil(() => !isEscaped);
-            yield return new WaitForSeconds(timeIdled);
-        }
-    }
-
     public void killSheep()
     {
         SheepBehaviour behaviour = gameObject.GetComponent<SheepBehaviour>();
@@ -179,8 +202,51 @@ public class SheepBehaviour : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }    
+    }   
 
+
+//----------------------------------------------------------------------------------------------------------------
+//IEnumerators
+    IEnumerator ChooseRandomPosition()
+    {
+        while (true)
+        {
+            float posX = Random.Range(pos1.position.x, pos2.position.x);
+            float posY = Random.Range(pos1.position.y, pos2.position.y);
+            randomPosition = new(posX, posY);
+            float timeIdled = Random.Range(minIdleTime, maxIdleTime);
+            yield return new WaitUntil(() => !isEscaped);
+            yield return new WaitForSeconds(timeIdled);
+        }
+    }
+
+    public IEnumerator StartRecovery()
+    {
+        yield return new WaitForSeconds(flungRecoveryTime);
+        SetGrabbedBy(null);
+        setIsRecovering(false);
+        if(!inPen)
+        {
+            EscapePen();
+        }
+    } 
+
+    public IEnumerator ApplyImpactDrag()
+    {
+        float originalDrag = sheep.linearDamping;
+        sheep.linearDamping = 0;
+        sheepSR.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        sheepSR.color = originalColor;
+        sheep.linearDamping = 5f;
+        yield return new WaitForSeconds(2);
+        sheep.linearDamping = originalDrag;
+    }
+    
+    
+
+//----------------------------------------------------------------------------------------------------------------
+//setters and getters
     public void setIsEscaped(bool isEscaped)
     {
         if (isEscaped == true)
@@ -240,11 +306,5 @@ public class SheepBehaviour : MonoBehaviour
         {
             return null;
         }
-    }
-
-    public IEnumerator StartRecovery()
-    {
-        yield return new WaitForSeconds(flungRecoveryTime);
-        isRecovering = false;
     }
 }

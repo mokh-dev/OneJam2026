@@ -1683,7 +1683,8 @@ GameObject:
   - component: {fileID: 976792133}
   - component: {fileID: 976792132}
   - component: {fileID: 976792131}
-  m_Layer: 0
+  - component: {fileID: 976792136}
+  m_Layer: 6
   m_Name: Rock (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1849,6 +1850,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &976792136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976792130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09065afa02712e54eb03bce0b13f1800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RockScript
 --- !u!1 &1049106582
 GameObject:
   m_ObjectHideFlags: 0
@@ -2224,7 +2237,8 @@ GameObject:
   - component: {fileID: 1213017340}
   - component: {fileID: 1213017339}
   - component: {fileID: 1213017338}
-  m_Layer: 0
+  - component: {fileID: 1213017343}
+  m_Layer: 6
   m_Name: Rock (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2390,6 +2404,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1213017343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213017337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09065afa02712e54eb03bce0b13f1800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RockScript
 --- !u!1 &1219277799
 GameObject:
   m_ObjectHideFlags: 0
@@ -3115,7 +3141,8 @@ GameObject:
   - component: {fileID: 1712547757}
   - component: {fileID: 1712547755}
   - component: {fileID: 1712547756}
-  m_Layer: 0
+  - component: {fileID: 1712547758}
+  m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3281,6 +3308,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086b7b793886b854b86abeb95cbafdff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lassoable
+--- !u!114 &1712547758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712547752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09065afa02712e54eb03bce0b13f1800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RockScript
 --- !u!1 &1820141229
 GameObject:
   m_ObjectHideFlags: 0
@@ -3329,7 +3368,8 @@ GameObject:
   - component: {fileID: 2079625725}
   - component: {fileID: 2079625724}
   - component: {fileID: 2079625723}
-  m_Layer: 0
+  - component: {fileID: 2079625728}
+  m_Layer: 6
   m_Name: Rock (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3495,6 +3535,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2079625728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079625722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09065afa02712e54eb03bce0b13f1800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RockScript
 --- !u!1 &2098435779
 GameObject:
   m_ObjectHideFlags: 0

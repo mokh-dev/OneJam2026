@@ -18,8 +18,10 @@ public class Lassoable : MonoBehaviour
         {
             if (sheepBehaviour.GetGrabbedBy() != null)
             {
+                StartCoroutine(sheepBehaviour.GetGrabbedBy().GetComponent<BanditBehaviour>().ApplyImpactDrag());
                 sheepBehaviour.GetGrabbedBy().GetComponent<BanditBehaviour>().DropSheep();
             }
+            gameObject.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
             sheepBehaviour.setIsRecovering(true);
         }
     }

@@ -110,6 +110,7 @@ MonoBehaviour:
   speed: 1
   maxAngle: 15
   minAngle: 5
+  timeToDie: 2
   flungRecoveryTime: 3.5
 --- !u!50 &3486409863771218850
 Rigidbody2D:

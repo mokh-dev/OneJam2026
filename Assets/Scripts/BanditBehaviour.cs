@@ -18,23 +18,20 @@ public class BanditBehaviour : MonoBehaviour
     SheepBehaviour sheepBehaviour;
     Rigidbody2D bandit;
     Rigidbody2D sheepRb;
+    SpriteRenderer banditSR;
     GameObject currentTarget;
     GameObject grabbedSheep;
 
     Vector2 banditRotation;
+    Color originalColor;
     int rockFlyingLayer;
-    float maxRad;
-    float minRad;
-    float banditPositionY;
     float impactForce;
     bool isRecovering;
-    bool isStraight;
 
     void Start()
     {
-        //changes angles to rads for ease of use
-        maxRad = Mathf.Deg2Rad * maxAngle;
-        minRad = Mathf.Deg2Rad * minAngle;
+        banditSR = GetComponent<SpriteRenderer>();
+        originalColor = banditSR.color;
         rockFlyingLayer = LayerMask.NameToLayer("RockFlying");
         escapeManager = SheepEscapeManager.Instance;
         currentTarget = chooseSheep();
@@ -73,6 +70,25 @@ public class BanditBehaviour : MonoBehaviour
         }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------
+//Collisions and Triggers
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == rockFlyingLayer)
+        {
+            float impactForce = collision.relativeVelocity.magnitude;
+
+            if (impactForce > 5f)
+            {
+                Debug.Log("BLEH");
+                setIsRecovering(true);
+                StartCoroutine(ApplyImpactDrag());
+                StartCoroutine(StartRecovery());
+            }
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("SheepHoldingBox") && collision.transform.parent.gameObject == currentTarget)
@@ -84,42 +100,19 @@ public class BanditBehaviour : MonoBehaviour
             sheepRb = grabbedSheep.GetComponent<Rigidbody2D>();
             gameObject.GetComponent<Lassoable>().enabled = false;
             gameObject.GetComponent<Collider2D>().enabled = false;
-
         }
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.layer == rockFlyingLayer)
+        if (collision.CompareTag("KillZone"))
         {
-            float impactForce = collision.relativeVelocity.magnitude;
-
-            if (impactForce > 5f)
-            {
-                setIsRecovering(true);
-                StartRecovery();
-            }
+            killBandit();
         }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------
+//Custom Methods
     void runBack()
     {
         bandit.linearVelocity = Vector2.left * speed;
-    }
-
-    GameObject chooseSheep()
-    {
-        if (escapeManager.sheepList.Count != 0)
-        {
-            int randomIndex = Random.Range(0, escapeManager.sheepList.Count);
-            GameObject chosenSheep = escapeManager.sheepList[randomIndex];
-            return chosenSheep;
-        }
-        else
-        {
-            Debug.Log("couldnt find sheep");
-            return null;
-        }
     }
 
     void chaseSheep()
@@ -144,7 +137,6 @@ public class BanditBehaviour : MonoBehaviour
         isRecovering = true;
         sheepBehaviour.setIsEscaped(false);
         sheepBehaviour.setIsRecovering(true);
-        sheepBehaviour.SetGrabbedBy(null);
         grabbedSheep = null;
         currentTarget = null;
         Debug.Log("dropped");
@@ -157,15 +149,51 @@ public class BanditBehaviour : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void setIsRecovering(bool isRecovering)
+    GameObject chooseSheep()
     {
-        this.isRecovering = isRecovering;
+        if (escapeManager.sheepList.Count != 0)
+        {
+            int randomIndex = Random.Range(0, escapeManager.sheepList.Count);
+            GameObject chosenSheep = escapeManager.sheepList[randomIndex];
+            return chosenSheep;
+        }
+        else
+        {
+            Debug.Log("couldnt find sheep");
+            return null;
+        }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------
+//IEnumerators
     public IEnumerator StartRecovery()
     {
         yield return new WaitForSeconds(flungRecoveryTime);
         isRecovering = false;
+    }
+
+    public IEnumerator ApplyImpactDrag()
+    {
+        if (bandit != null)
+        {
+            float originalDrag = bandit.linearDamping;
+            bandit.linearDamping = 0;
+            banditSR.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            banditSR.color = originalColor;
+            bandit.linearDamping = 5f;
+            yield return new WaitForSeconds(2);
+            bandit.linearDamping = originalDrag;
+        }
+    }
+
+
+//----------------------------------------------------------------------------------------------------------------
+//setters and getters
+    public void setIsRecovering(bool isRecovering)
+    {
+        this.isRecovering = isRecovering;
     }
 
     public bool getIsRecovering()
