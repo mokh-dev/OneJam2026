@@ -29,14 +29,21 @@ public class Lasso : MonoBehaviour
         }
     }
 
-    public void PlayerFlung(float flingForce)
+    public void PlayerFlung(float flingForce, float angle)
     {
         isSpinning = false;
 
+        float rad = (angle + 90) * Mathf.Deg2Rad;
+
+        Vector2 dir = new Vector2(
+            Mathf.Cos(rad),
+            Mathf.Sin(rad)
+        );
+
         caughtObj.LassoLetGo();
         caughtObj.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-        Debug.Log(transform.TransformDirection(-transform.right));
-        caughtObj.GetComponent<Rigidbody2D>().AddForce(-transform.right * flingForce, ForceMode2D.Impulse);
+        Debug.Log(dir);
+        caughtObj.GetComponent<Rigidbody2D>().AddForce(dir * flingForce, ForceMode2D.Impulse);
         caughtObj = null;
 
         lassoJoint.enabled = false;

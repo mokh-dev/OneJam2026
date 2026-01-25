@@ -121,7 +121,12 @@ public class Player : MonoBehaviour
     }
     public void MouseUp()
     {
-        if (lassoIsSpinning == true) FlingObject();
+        
+    
+        Vector2 lassoDir = ((Vector2)activeLasso.transform.position - (Vector2)transform.position).normalized;  
+        float lassoRotationAngle = Mathf.Atan2(lassoDir.y, lassoDir.x) * Mathf.Rad2Deg;
+
+        if (lassoIsSpinning == true) FlingObject(lassoRotationAngle);
         
         if (holdingLasso == false) StartRetracting();
     }
@@ -244,9 +249,10 @@ public class Player : MonoBehaviour
         ropeSR.size = new Vector2(0, ropeSR.size.y);
     }
 
-    private void FlingObject()
+    private void FlingObject(float angle)
     {
-        activeLasso.PlayerFlung((_lassoBaseFlingForce + SpinSpeed *_lassoSpinFlingForceBias) * Mathf.Sign(spinDirection));
+        //activeLasso.PlayerFlung(_lassoBaseFlingForce + SpinSpeed *_lassoSpinFlingForceBias, angle);
+        activeLasso.PlayerFlung((_lassoBaseFlingForce + SpinSpeed *_lassoSpinFlingForceBias) * Mathf.Sign(spinDirection), angle);
 
         lassoIsSpinning = false;
         lassoFull = false;
