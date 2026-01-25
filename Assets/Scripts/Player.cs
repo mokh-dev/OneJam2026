@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject _lassoPre; 
     [SerializeField] private GameObject _ropeObj; 
+    public Rigidbody2D AnchorRB;
     [SerializeField] private float _playerMoveSpeed; 
     [SerializeField] private float _lassoThrowForce; 
     [SerializeField] private float _lassoRetractingForce; 
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _lassoSpinDistanceBias; 
     [SerializeField] private float _lassoBaseFlingForce; 
     [SerializeField] private float _lassoSpinFlingForceBias; 
+    [SerializeField] private float _lassoSize; 
 
     private bool holdingLasso = true;
     private bool isRetractingLasso;
@@ -36,12 +38,15 @@ public class Player : MonoBehaviour
     private Vector2 previousMousePos;
 
     private GameObject grabbedObj;
+    private SpriteRenderer playerSR;
+    private Animator playerAnim;
     private SpriteRenderer ropeSR;
     private Lasso activeLasso;
     private Rigidbody2D activeLassoRB;
     private Rigidbody2D playerRB;
+    
     private Vector2 moveDirection;
-    private float spinSpeed;
+    public float SpinSpeed;
     
 
 
@@ -53,6 +58,8 @@ public class Player : MonoBehaviour
         cam = Camera.main;
         playerRB = gameObject.GetComponent<Rigidbody2D>();
         ropeSR = _ropeObj.GetComponent<SpriteRenderer>();
+        playerSR = gameObject.GetComponent<SpriteRenderer>();
+        playerAnim = gameObject.GetComponent<Animator>();
     }
 
     void Update()
@@ -60,6 +67,26 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
         IsHoldingMouseDown = Input.GetButton("Fire1");
+
+        if (moveDirection.x == 1)
+        {
+            playerSR.flipX = true;
+        }
+        else if (moveDirection.x == -1)
+        {
+            playerSR.flipX = false;
+        }
+
+        if (moveDirection != Vector2.zero)
+        {
+           playerAnim.SetInteger("MoveDir", 1); 
+        }
+        else
+        {
+            playerAnim.SetInteger("MoveDir", 0);
+        }
+
+        playerAnim.SetBool("IsLassoing", lassoIsSpinning);
 
         if (Input.GetButtonDown("Fire1")) MouseDown();
         if (Input.GetButtonUp("Fire1")) MouseUp();
@@ -113,7 +140,7 @@ public class Player : MonoBehaviour
 
         _ropeObj.transform.rotation = ropeRotation;
 
-        float lassoDistance = Vector2.Distance(transform.position, activeLasso.transform.position);
+        float lassoDistance = Vector2.Distance(transform.position, activeLasso.transform.position) - _lassoSize;
         ropeSR.size = new Vector2(lassoDistance, ropeSR.size.y);
     }
 
@@ -164,9 +191,9 @@ public class Player : MonoBehaviour
 
     private void SpinLasso()
     {
-        spinSpeed = _lassoBaseSpinSpeed + _lassoSpinIncreaseCoefficient * Mathf.Max(0f, Mathf.Log(Mathf.Abs(spinIncreaseCount))) * Mathf.Sign(spinIncreaseCount);
+        SpinSpeed = _lassoBaseSpinSpeed + _lassoSpinIncreaseCoefficient * Mathf.Max(0f, Mathf.Log(Mathf.Abs(spinIncreaseCount))) * Mathf.Sign(spinIncreaseCount);
 
-        playerRB.MoveRotation(playerRB.rotation + spinSpeed * Time.fixedDeltaTime);
+        AnchorRB.MoveRotation(AnchorRB.rotation + SpinSpeed * Time.fixedDeltaTime);
     }
 
 
@@ -175,7 +202,7 @@ public class Player : MonoBehaviour
         Vector2 lassoDirection = ((Vector2)activeLasso.gameObject.transform.position - (Vector2)transform.position).normalized;
 
         float playerRotationAngle = (Mathf.Atan2(lassoDirection.y, lassoDirection.x) * Mathf.Rad2Deg) - 90;
-        playerRB.SetRotation(playerRotationAngle);
+        //playerRB.SetRotation(playerRotationAngle);
 
         activeLassoRB.linearVelocity = Vector2.zero;
 
@@ -219,7 +246,7 @@ public class Player : MonoBehaviour
 
     private void FlingObject()
     {
-        activeLasso.PlayerFlung((_lassoBaseFlingForce + spinSpeed *_lassoSpinFlingForceBias) * Mathf.Sign(spinDirection));
+        activeLasso.PlayerFlung((_lassoBaseFlingForce + SpinSpeed *_lassoSpinFlingForceBias) * Mathf.Sign(spinDirection));
 
         lassoIsSpinning = false;
         lassoFull = false;
@@ -230,7 +257,7 @@ public class Player : MonoBehaviour
         currentSpunMouseQuadrant = 0;
         previousSpunMouseQuadrant = 0;
         spinDirection = 0;
-        spinSpeed = 0;
+        SpinSpeed = 0;
     }
 
     private void StartRetracting()

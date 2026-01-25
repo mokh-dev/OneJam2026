@@ -20,6 +20,7 @@ public class SheepBehaviour : MonoBehaviour
     Transform pos1;
     Transform pos2;
     Rigidbody2D sheep;
+    Animator sheepAnim;
     SpriteRenderer sheepSR;
     Color originalColor;
     SheepEscapeManager escapeManager;
@@ -48,6 +49,7 @@ public class SheepBehaviour : MonoBehaviour
         sheep = GetComponent<Rigidbody2D>();
         sheepSR = GetComponent<SpriteRenderer>();
         originalColor = sheepSR.color;
+        sheepAnim = gameObject.GetComponent<Animator>();
         Perimeter = GameObject.FindGameObjectWithTag("Perimeter");
         pos1 = Perimeter.transform.GetChild(0);
         pos2 = Perimeter.transform.GetChild(1);
@@ -71,6 +73,7 @@ public class SheepBehaviour : MonoBehaviour
             else if (isEscaped)
             {
                 sheep.linearVelocity = escapeDirection * speed;
+                sheepAnim.SetBool("IsRunning", true);
             }
         }
 
@@ -78,6 +81,8 @@ public class SheepBehaviour : MonoBehaviour
         {
             numOfEscaped = 0;
         }
+
+        sheepAnim.SetBool("IsBound", grabbedBy != null);
     }
 
 
@@ -148,6 +153,8 @@ public class SheepBehaviour : MonoBehaviour
     //calculates and chooses a suitable angle for the sheep to escape through
     public void EscapePen()
     {
+        sheepAnim.SetBool("IsRunning", true);
+
         if (isEscaped == false)
         {
             setIsEscaped(true);
@@ -187,6 +194,7 @@ public class SheepBehaviour : MonoBehaviour
 
     public void killSheep()
     {
+        escapeManager.livingSheepList.Remove(this.gameObject);
         SheepBehaviour behaviour = gameObject.GetComponent<SheepBehaviour>();
         if (escapeManager.sheepList.Contains(gameObject))
         {
