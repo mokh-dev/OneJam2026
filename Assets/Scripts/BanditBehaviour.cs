@@ -174,11 +174,21 @@ public class BanditBehaviour : MonoBehaviour
             float originalDrag = bandit.linearDamping;
             bandit.linearDamping = 0;
             banditSR.color = Color.red;
+
             yield return new WaitForSeconds(0.1f);
-            banditSR.color = originalColor;
-            bandit.linearDamping = 5f;
-            yield return new WaitForSeconds(2);
-            bandit.linearDamping = originalDrag;
+            if (bandit != null)
+            {
+                
+                banditSR.color = originalColor;
+                bandit.linearDamping = 5f;
+
+                yield return new WaitForSeconds(2);
+                if (bandit != null)
+                {
+                    
+                    bandit.linearDamping = originalDrag;
+                }
+            }
         }
     }
 

@@ -848,6 +848,7 @@ MonoBehaviour:
   IsHoldingMouseDown: 0
   _lassoPre: {fileID: 4747503565193266507, guid: 34932d30c4d8ef34d8dadcd4e6222b80, type: 3}
   _ropeObj: {fileID: 1594612161}
+  AnchorRB: {fileID: 0}
   _playerMoveSpeed: 3
   _lassoThrowForce: 35
   _lassoRetractingForce: 30
@@ -856,6 +857,8 @@ MonoBehaviour:
   _lassoSpinDistanceBias: 5
   _lassoBaseFlingForce: 10
   _lassoSpinFlingForceBias: 0.02
+  _lassoSize: 0
+  SpinSpeed: 0
 --- !u!50 &565239604
 Rigidbody2D:
   serializedVersion: 5
@@ -1251,7 +1254,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -1320,8 +1323,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 1}
+  m_Sprite: {fileID: 21300000, guid: ab20100f04a22da458354b2703bd8a94, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1340,7 +1343,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.76, y: -2.38, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1575,7 +1578,9 @@ MonoBehaviour:
   maxEscapedSheep: 3
   minTimeToEscape: 2
   maxTimeToEscape: 5
+  gameManager: {fileID: 0}
   sheepList: []
+  livingSheepList: []
 --- !u!212 &1154354927
 SpriteRenderer:
   serializedVersion: 2
