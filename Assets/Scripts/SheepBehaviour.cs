@@ -147,6 +147,8 @@ public class SheepBehaviour : MonoBehaviour
         }
     }
 
+    
+
 
 //----------------------------------------------------------------------------------------------------------------
 //Custom Methods
@@ -212,6 +214,17 @@ public class SheepBehaviour : MonoBehaviour
         }
     }   
 
+    public void deathAnimation()
+    {
+       sheepAnim.SetBool("isRecovering", true);
+       sheepAnim.SetBool("isBound", false); 
+    }
+
+    public void undyingAnimation()
+    {
+        sheepAnim.SetBool("isRecovering", false);
+    }
+
 
 //----------------------------------------------------------------------------------------------------------------
 //IEnumerators
@@ -230,7 +243,10 @@ public class SheepBehaviour : MonoBehaviour
 
     public IEnumerator StartRecovery()
     {
+        Debug.Log("yo im yoouing");
+        deathAnimation();
         yield return new WaitForSeconds(flungRecoveryTime);
+        undyingAnimation();
         SetGrabbedBy(null);
         setIsRecovering(false);
         if(!inPen)
