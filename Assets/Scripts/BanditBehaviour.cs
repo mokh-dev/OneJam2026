@@ -13,7 +13,6 @@ public class BanditBehaviour : MonoBehaviour
     [SerializeField] float minAngle = 5f;
     [SerializeField] float timeToDie = 2f;
     [SerializeField] float flungRecoveryTime = 3.5f;
-    [SerializeField] float leftOffscreenValue;
 
     SheepEscapeManager escapeManager;
     SheepBehaviour sheepBehaviour;
@@ -33,7 +32,6 @@ public class BanditBehaviour : MonoBehaviour
     void Start()
     {
         banditAnim = gameObject.GetComponent<Animator>();
-
         banditSR = GetComponent<SpriteRenderer>();
         originalColor = banditSR.color;
         rockFlyingLayer = LayerMask.NameToLayer("RockFlying");
@@ -72,16 +70,30 @@ public class BanditBehaviour : MonoBehaviour
                 runBack();
             }
         }
+    }
 
-        if (gameObject.transform.position.x < leftOffscreenValue)
+
+//----------------------------------------------------------------------------------------------------------------
+//Collisions and Triggers
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == rockFlyingLayer)
         {
-            killBandit();
+            float impactForce = collision.relativeVelocity.magnitude;
+
+            if (impactForce > 5f)
+            {
+                Debug.Log("BLEH");
+                setIsRecovering(true);
+                StartCoroutine(ApplyImpactDrag());
+                StartCoroutine(StartRecovery());
+            }
         }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("SheepHoldingBox") && collision.gameObject == currentTarget)
+        if (collision.CompareTag("SheepHoldingBox") && collision.transform.parent.gameObject == currentTarget)
         {
             sheepBehaviour.setIsEscaped(true);
             sheepBehaviour.setIsRecovering(true);
@@ -90,9 +102,7 @@ public class BanditBehaviour : MonoBehaviour
             sheepRb = grabbedSheep.GetComponent<Rigidbody2D>();
             gameObject.GetComponent<Lassoable>().enabled = false;
             gameObject.GetComponent<Collider2D>().enabled = false;
-
         }
-
         if (collision.CompareTag("KillZone"))
         {
             killBandit();
@@ -104,7 +114,6 @@ public class BanditBehaviour : MonoBehaviour
 //Custom Methods
     void runBack()
     {
-        gameObject.GetComponent<SpriteRenderer>().flipX = false;
         bandit.linearVelocity = Vector2.left * speed;
     }
 
@@ -133,8 +142,7 @@ public class BanditBehaviour : MonoBehaviour
         grabbedSheep = null;
         currentTarget = null;
         Debug.Log("dropped");
-        
-        banditAnim.SetBool("IsDead", true);
+        //code to play kill  animation
         Invoke("killBandit", timeToDie);
     }
 
@@ -174,21 +182,11 @@ public class BanditBehaviour : MonoBehaviour
             float originalDrag = bandit.linearDamping;
             bandit.linearDamping = 0;
             banditSR.color = Color.red;
-
             yield return new WaitForSeconds(0.1f);
-            if (bandit != null)
-            {
-                
-                banditSR.color = originalColor;
-                bandit.linearDamping = 5f;
-
-                yield return new WaitForSeconds(2);
-                if (bandit != null)
-                {
-                    
-                    bandit.linearDamping = originalDrag;
-                }
-            }
+            banditSR.color = originalColor;
+            bandit.linearDamping = 5f;
+            yield return new WaitForSeconds(2);
+            bandit.linearDamping = originalDrag;
         }
     }
 
@@ -198,6 +196,7 @@ public class BanditBehaviour : MonoBehaviour
     public void setIsRecovering(bool isRecovering)
     {
         this.isRecovering = isRecovering;
+        banditAnim.SetBool("IsDead", true);
     }
 
     public bool getIsRecovering()
