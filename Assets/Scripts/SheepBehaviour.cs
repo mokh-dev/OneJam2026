@@ -20,6 +20,7 @@ public class SheepBehaviour : MonoBehaviour
     Transform pos1;
     Transform pos2;
     Rigidbody2D sheep;
+    Animator sheepAnim;
     SheepEscapeManager escapeManager;
 
     Vector2 randomPosition;
@@ -42,6 +43,7 @@ public class SheepBehaviour : MonoBehaviour
         maxRad = Mathf.Deg2Rad * maxAngle;
         minRad = Mathf.Deg2Rad * minAngle;
         sheep = GetComponent<Rigidbody2D>();
+        sheepAnim = gameObject.GetComponent<Animator>();
         Perimeter = GameObject.FindGameObjectWithTag("Perimeter");
         pos1 = Perimeter.transform.GetChild(0);
         pos2 = Perimeter.transform.GetChild(1);
@@ -57,10 +59,11 @@ public class SheepBehaviour : MonoBehaviour
     {
         if (!isEscaped && !isRecovering)
         {
-            sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * 2 * Time.deltaTime));
+            //sheep.MovePosition(Vector2.MoveTowards(sheep.position, randomPosition, speed * 2 * Time.deltaTime));
         }
         else if (isEscaped && !isRecovering)
         {
+            sheepAnim.SetBool("IsRunning", true);
             sheep.linearVelocity = escapeDirection * speed;
         }
 
@@ -68,11 +71,15 @@ public class SheepBehaviour : MonoBehaviour
         {
             numOfEscaped = 0;
         }
+
+        sheepAnim.SetBool("IsBound", grabbedBy != null);
     }
 
     //calculates and chooses a suitable angle for the sheep to escape through
     public void EscapePen()
     {
+        sheepAnim.SetBool("IsRunning", true);
+
         if (isEscaped == false)
         {
             setIsEscaped(true);
@@ -127,6 +134,11 @@ public class SheepBehaviour : MonoBehaviour
                 sheep.linearVelocity = Vector2.zero;
             }
         }
+
+        if (other.CompareTag("KillZone"))
+        {
+            killSheep();
+        }
     }
 
     IEnumerator ChooseRandomPosition()
@@ -144,6 +156,7 @@ public class SheepBehaviour : MonoBehaviour
 
     public void killSheep()
     {
+        escapeManager.livingSheepList.Remove(this.gameObject);
         SheepBehaviour behaviour = gameObject.GetComponent<SheepBehaviour>();
         if (escapeManager.sheepList.Contains(gameObject))
         {

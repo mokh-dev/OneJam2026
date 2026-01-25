@@ -7,9 +7,11 @@ public class SheepEscapeManager : MonoBehaviour
     [SerializeField] int maxEscapedSheep = 3;
     [SerializeField] float minTimeToEscape = 2f;
     [SerializeField] float maxTimeToEscape = 5f;
+    [SerializeField] GameManager gameManager;
     
 
     public List<GameObject> sheepList = new List<GameObject>();
+    public List<GameObject> livingSheepList = new List<GameObject>();
     public static SheepEscapeManager Instance;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,8 +29,18 @@ public class SheepEscapeManager : MonoBehaviour
 
     void Start()
     {
+        livingSheepList = new List<GameObject>(sheepList);
         StartCoroutine(escapeSheep());
     }
+
+    void Update()
+    {
+        if (livingSheepList.Count <= 0)
+        {
+            gameManager.ResetGame();
+        }
+    }
+
 
     public void addSheepToList(GameObject sheep)
     {

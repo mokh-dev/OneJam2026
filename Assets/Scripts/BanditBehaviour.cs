@@ -13,6 +13,7 @@ public class BanditBehaviour : MonoBehaviour
     [SerializeField] float minAngle = 5f;
     [SerializeField] float timeToDie = 2f;
     [SerializeField] float flungRecoveryTime = 3.5f;
+    [SerializeField] float leftOffscreenValue;
 
     SheepEscapeManager escapeManager;
     SheepBehaviour sheepBehaviour;
@@ -20,6 +21,7 @@ public class BanditBehaviour : MonoBehaviour
     Rigidbody2D sheepRb;
     GameObject currentTarget;
     GameObject grabbedSheep;
+    Animator banditAnim;
 
     Vector2 banditRotation;
     float maxRad;
@@ -30,6 +32,8 @@ public class BanditBehaviour : MonoBehaviour
 
     void Start()
     {
+        banditAnim = gameObject.GetComponent<Animator>();
+
         //changes angles to rads for ease of use
         maxRad = Mathf.Deg2Rad * maxAngle;
         minRad = Mathf.Deg2Rad * minAngle;
@@ -68,11 +72,16 @@ public class BanditBehaviour : MonoBehaviour
                 runBack();
             }
         }
+
+        if (gameObject.transform.position.x < leftOffscreenValue)
+        {
+            killBandit();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("SheepHoldingBox") && collision.transform.parent.gameObject == currentTarget)
+        if (collision.CompareTag("SheepHoldingBox") && collision.gameObject == currentTarget)
         {
             sheepBehaviour.setIsEscaped(true);
             sheepBehaviour.setIsRecovering(true);
@@ -83,10 +92,16 @@ public class BanditBehaviour : MonoBehaviour
             gameObject.GetComponent<Collider2D>().enabled = false;
 
         }
+
+        if (collision.CompareTag("KillZone"))
+        {
+            killBandit();
+        }
     }
 
     void runBack()
     {
+        gameObject.GetComponent<SpriteRenderer>().flipX = false;
         bandit.linearVelocity = Vector2.left * speed;
     }
 
@@ -130,7 +145,8 @@ public class BanditBehaviour : MonoBehaviour
         grabbedSheep = null;
         currentTarget = null;
         Debug.Log("dropped");
-        //code to play kill  animation
+        
+        banditAnim.SetBool("IsDead", true);
         Invoke("killBandit", timeToDie);
     }
 

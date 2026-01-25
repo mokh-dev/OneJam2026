@@ -1,10 +1,25 @@
 fileFormatVersion: 2
-guid: ae651ff9c291dfe4196365fd16463a95
+guid: e5579d10b145bd647a58974acb6fb2e4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7444020981140975323
-    second: imgonline-com-ua-TextureSeamless-nxhVeGsGwPzJX_0
+      213: -3888286512084271240
+    second: cowboyRun-Sheet_0
+  - first:
+      213: 6726381241908126934
+    second: cowboyRun-Sheet_1
+  - first:
+      213: 4664459956500286385
+    second: cowboyRun-Sheet_2
+  - first:
+      213: -884054059634621531
+    second: cowboyRun-Sheet_3
+  - first:
+      213: 4921395232333553094
+    second: cowboyRun-Sheet_4
+  - first:
+      213: 6879837699517195800
+    second: cowboyRun-Sheet_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,15 +55,15 @@ TextureImporter:
     filterMode: 0
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 32
@@ -126,13 +141,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: imgonline-com-ua-TextureSeamless-nxhVeGsGwPzJX_0
+      name: cowboyRun-Sheet_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 64
-        height: 64
+        x: 14
+        y: 2
+        width: 24
+        height: 38
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +156,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bde667964a97e4760800000000000000
-      internalID: 7444020981140975323
+      spriteID: 87f364ea4080a0ac0800000000000000
+      internalID: -3888286512084271240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cowboyRun-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 2
+        width: 29
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d4e8c30a18e85d50800000000000000
+      internalID: 6726381241908126934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cowboyRun-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 2
+        width: 23
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bbcb38fd9d7bb040800000000000000
+      internalID: 4664459956500286385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cowboyRun-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 2
+        width: 25
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a38c3544853bb3f0800000000000000
+      internalID: -884054059634621531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cowboyRun-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 3
+        width: 29
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cdda8e93ee4c4440800000000000000
+      internalID: 4921395232333553094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cowboyRun-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 2
+        width: 24
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8162010dfe71a7f50800000000000000
+      internalID: 6879837699517195800
       vertices: []
       indices: 
       edges: []
@@ -151,7 +276,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +286,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      imgonline-com-ua-TextureSeamless-nxhVeGsGwPzJX_0: 7444020981140975323
+      cowboyRun-Sheet_0: -3888286512084271240
+      cowboyRun-Sheet_1: 6726381241908126934
+      cowboyRun-Sheet_2: 4664459956500286385
+      cowboyRun-Sheet_3: -884054059634621531
+      cowboyRun-Sheet_4: 4921395232333553094
+      cowboyRun-Sheet_5: 6879837699517195800
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

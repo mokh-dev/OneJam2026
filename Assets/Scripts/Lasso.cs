@@ -25,7 +25,7 @@ public class Lasso : MonoBehaviour
     {
         if (isSpinning == true)
         {
-            lassoRB.SetRotation(playerRB.rotation);
+            lassoRB.SetRotation(PlayerScript.AnchorRB.rotation);
         }
     }
 
@@ -58,7 +58,7 @@ public class Lasso : MonoBehaviour
         lassoJoint.enabled = true;
 
         playerRB = PlayerScript.gameObject.GetComponent<Rigidbody2D>();
-        lassoJoint.connectedBody = playerRB;
+        lassoJoint.connectedBody = PlayerScript.AnchorRB;
     } 
 
     public void StartedSpinning()

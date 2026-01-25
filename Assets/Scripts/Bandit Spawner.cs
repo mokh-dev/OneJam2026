@@ -43,7 +43,7 @@ public class BanditSpawner : MonoBehaviour
 
             Vector2 spawnPosition = new Vector2(posX, posY); //spawns the bandit
 
-            Instantiate(bandit, spawnPosition, Quaternion.Euler(0, 0, 90)); //spawns the bandit
+            Instantiate(bandit, spawnPosition, Quaternion.identity); //spawns the bandit
         }
     }
 

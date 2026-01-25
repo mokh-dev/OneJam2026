@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3486409863771218850}
   - component: {fileID: 1585529933255836083}
   - component: {fileID: 2907188136874440956}
+  - component: {fileID: 8115061482402177053}
   m_Layer: 10
   m_Name: Bandits
   m_TagString: Untagged
@@ -85,12 +86,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 2491271674725654672, guid: a7c8ea16d5ab1be46895e576e9a156e6, type: 3}
+  m_Sprite: {fileID: 8112151238298354741, guid: c43be0eb08f856d4781ee9fc433b220d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.90625, y: 1.1875}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -110,7 +111,9 @@ MonoBehaviour:
   speed: 1
   maxAngle: 15
   minAngle: 5
+  timeToDie: 2
   flungRecoveryTime: 3.5
+  leftOffscreenValue: -18
 --- !u!50 &3486409863771218850
 Rigidbody2D:
   serializedVersion: 5
@@ -186,3 +189,25 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!95 &8115061482402177053
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2544128232903048341}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d85d1a75399061c4c8798a851ad29a09, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
