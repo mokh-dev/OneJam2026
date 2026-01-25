@@ -22,9 +22,11 @@ public class BanditBehaviour : MonoBehaviour
     GameObject grabbedSheep;
 
     Vector2 banditRotation;
+    int rockFlyingLayer;
     float maxRad;
     float minRad;
     float banditPositionY;
+    float impactForce;
     bool isRecovering;
     bool isStraight;
 
@@ -33,6 +35,7 @@ public class BanditBehaviour : MonoBehaviour
         //changes angles to rads for ease of use
         maxRad = Mathf.Deg2Rad * maxAngle;
         minRad = Mathf.Deg2Rad * minAngle;
+        rockFlyingLayer = LayerMask.NameToLayer("RockFlying");
         escapeManager = SheepEscapeManager.Instance;
         currentTarget = chooseSheep();
         if (currentTarget != null)
@@ -82,6 +85,19 @@ public class BanditBehaviour : MonoBehaviour
             gameObject.GetComponent<Lassoable>().enabled = false;
             gameObject.GetComponent<Collider2D>().enabled = false;
 
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == rockFlyingLayer)
+        {
+            float impactForce = collision.relativeVelocity.magnitude;
+
+            if (impactForce > 5f)
+            {
+                killBandit();
+            }
         }
     }
 

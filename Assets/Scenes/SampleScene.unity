@@ -2436,6 +2436,7 @@ GameObject:
   - component: {fileID: 1712547757}
   - component: {fileID: 1712547755}
   - component: {fileID: 1712547756}
+  - component: {fileID: 1712547758}
   m_Layer: 6
   m_Name: Rock
   m_TagString: Untagged
@@ -2602,6 +2603,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086b7b793886b854b86abeb95cbafdff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lassoable
+--- !u!114 &1712547758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712547752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09065afa02712e54eb03bce0b13f1800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RockScript
 --- !u!1 &1820141229
 GameObject:
   m_ObjectHideFlags: 0

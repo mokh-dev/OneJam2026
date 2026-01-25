@@ -10,7 +10,8 @@ public class RockScript : MonoBehaviour
     bool isColliding = true;
     int sheepLayer;
     int banditLayer;
-    int rockLayer;
+    int rockStoppedLayer;
+    int rockFlyingLayer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,14 +20,15 @@ public class RockScript : MonoBehaviour
         rockRb = GetComponent<Rigidbody2D>();
         sheepLayer = LayerMask.NameToLayer("Sheep");
         banditLayer = LayerMask.NameToLayer("Bandits");
-        rockLayer = LayerMask.NameToLayer("Rock");
+        rockStoppedLayer = LayerMask.NameToLayer("RockStopped");
+        rockFlyingLayer = LayerMask.NameToLayer("RockFlying");
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (rockRb.linearVelocity == Vector2.zero)
+        if (rockRb.linearVelocity.magnitude < 0.1f)
         {
             DissableCollisions();
         }
@@ -40,8 +42,7 @@ public class RockScript : MonoBehaviour
     {
         if (isColliding)
         {
-            Physics2D.IgnoreLayerCollision(rockLayer, sheepLayer, true);
-            Physics2D.IgnoreLayerCollision(rockLayer, banditLayer, true);
+            gameObject.layer = rockStoppedLayer;
             isColliding = false;
         }
     }
@@ -50,8 +51,7 @@ public class RockScript : MonoBehaviour
     {
         if (!isColliding)
         {
-            Physics2D.IgnoreLayerCollision(rockLayer, sheepLayer, false);
-            Physics2D.IgnoreLayerCollision(rockLayer, banditLayer, false); 
+            gameObject.layer = rockFlyingLayer;
             isColliding = true;
         }
     }
